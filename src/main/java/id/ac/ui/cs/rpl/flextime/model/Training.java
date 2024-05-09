@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,12 +15,13 @@ public class Training {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @OneToOne (cascade = CascadeType.ALL)
+    @OneToMany (cascade = CascadeType.ALL)
     @JoinColumn(
             name = "customization_id",
-            referencedColumnName = "id"
+            referencedColumnName = "id",
+            nullable = true
     )
-    private Customization customization;
+    private List<Customization> customization;
 
     private String title;
     @Column(columnDefinition = "TEXT")
