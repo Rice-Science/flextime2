@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface TrainingService {
 
-    Training addTraining(Training training);
+    Training saveTraining(Training training);
 
     void deleteTrainingById(String id);
 
