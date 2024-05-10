@@ -18,8 +18,4 @@ public class FitnessPlan {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
-
-    @OneToMany
-    @JoinColumn(name = "fitness_plan_id", nullable = false)
-    private List<SessionPlan> sessionPlan;
 }

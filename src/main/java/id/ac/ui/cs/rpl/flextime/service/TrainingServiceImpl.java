@@ -34,4 +34,9 @@ public class TrainingServiceImpl implements TrainingService {
     public List<Training> getAllTrainings() {
         return trainingRepository.findAll();
     }
+
+    @Override
+    public List<Training> getAllTrainingsByTrainingType(String trainingType) {
+        return trainingRepository.findTrainingsByTrainingType(trainingType);
+    }
 }

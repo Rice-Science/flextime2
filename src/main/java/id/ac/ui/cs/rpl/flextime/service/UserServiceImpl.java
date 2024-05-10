@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
             user.setUsername(username);
             user.setEmail(email);
             user.setPassword(new BCryptPasswordEncoder().encode(password));
-            user.setCustomer(false);
+            user.setCustomer(true);
             user.setAdmin(false);
 
             return userRepository.save(user);
