@@ -5,9 +5,7 @@ import id.ac.ui.cs.rpl.flextime.repository.AssignmentSchedulesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AssignmentSchedulesServiceImpl implements AssignmentSchedulesService{
@@ -16,31 +14,33 @@ public class AssignmentSchedulesServiceImpl implements AssignmentSchedulesServic
     private AssignmentSchedulesRepository assignmentRepository;
 
     @Override
-    public AssignmentSchedules create(AssignmentSchedules assignment) {
-        assignmentRepository.create(assignment);
-        return assignment;
+    public void create(AssignmentSchedules assignment) {
+        assignmentRepository.save(assignment);
     }
 
     @Override
     public List<AssignmentSchedules> findAll() {
-        Iterator<AssignmentSchedules> productIterator = assignmentRepository.findAll();
-        List<AssignmentSchedules> allProduct = new ArrayList<>();
-        productIterator.forEachRemaining(allProduct::add);
-        return allProduct;
+        return assignmentRepository.findAll();
     }
 
     @Override
     public void delete(String id){
-        assignmentRepository.delete(id);
+        assignmentRepository.deleteById(UUID.fromString(id));
     }
 
     @Override
-    public AssignmentSchedules findById(String id) {
-        return assignmentRepository.findById(id);
+    public Optional<AssignmentSchedules> findById(String id) {
+        return assignmentRepository.findById(UUID.fromString(id));
     }
 
     @Override
-    public void update(AssignmentSchedules assignment) {
-        assignmentRepository.update(assignment);
+    public void update(String id, AssignmentSchedules updatedAssignment) {
+        AssignmentSchedules assignment = assignmentRepository.findById(UUID.fromString(id)).orElse(null);
+
+        if (assignment != null) {
+            assignment.setAssignmentSchedulesTitle(updatedAssignment.getAssignmentSchedulesTitle());
+            assignment.setAssignmentSchedulesDeadline(updatedAssignment.getAssignmentSchedulesDeadline());
+            assignmentRepository.save(assignment);
+        }
     }
 }
