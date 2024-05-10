@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -16,10 +18,20 @@ public class SessionPlan {
 
     private String trainingType;
 
-    @OneToOne (cascade = CascadeType.ALL)
-    @JoinColumn(
-            name = "training_list_id",
-            referencedColumnName = "id"
+    @ManyToOne
+    @JoinColumn(name = "fitness_plan_id", nullable = false)
+    private FitnessPlan fitnessPlan;
+
+    @ManyToMany
+    @JoinTable(
+            name = "session_plan_trainings",
+            joinColumns = @JoinColumn(name = "session_plan_id"),
+            inverseJoinColumns = @JoinColumn(name = "training_id")
     )
-    private TrainingList trainingList;
+    private List<Training> trainings = new ArrayList<>();
+
+    public Training addTraining(Training training) {
+        this.trainings.add(training);
+        return training;
+    }
 }
