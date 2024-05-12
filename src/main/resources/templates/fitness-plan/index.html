@@ -3,8 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Fitness Plan</title>
+    <link rel="stylesheet" href="/output.css">
 </head>
-<body>
+<body class="bg-tokyo-night-bg">
+    <div th:replace="navbar :: navbar">
+    </div>
 
+    <div class="flex flex-col items-center justify-center h-screen">
+        <h1 class="text-6xl font-bold text-center text-tokyo-night-variable transition ease-in-out hover:scale-110 hover:text-white hover:-translate-y-1 duration-150">Flex up with FlexTime!</h1>
+        <form method="POST" th:action="@{/fitness-plan/add}">
+            <button class="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-lg font-medium text-tokyo-night-variable rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 transition ease-in-out hover:scale-110 hover:-translate-y-1 duration-150 hover:text-white mt-5">
+                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-tokyo-night-bg rounded-md group-hover:bg-opacity-0">
+                    Create Fitness Plan
+                </span>
+            </button>
+        </form>
+    </div>
 </body>
 </html>

@@ -35,6 +35,9 @@ public class SessionPlanController {
                     .getAuthentication()
                     .getName()).getUsername()
         );
+        if (sessionPlans.isEmpty()) {
+            return "session-plan/indexNoSession";
+        }
         model.addAttribute("sessionPlans", sessionPlans);
         return "session-plan/index";
     }

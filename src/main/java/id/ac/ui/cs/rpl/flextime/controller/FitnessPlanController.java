@@ -21,8 +21,6 @@ public class FitnessPlanController {
     @Autowired
     private FitnessPlanService fitnessPlanService;
     @Autowired
-    private SessionPlanService sessionPlanService;
-    @Autowired
     private UserService userService;
     @PostMapping("/add")
     public String addFitnessPlan() {
@@ -36,16 +34,17 @@ public class FitnessPlanController {
     }
 
     @GetMapping("")
-    public String index(Model model) {
-        List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByUser(
+    public String index() {
+        FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(
             userService.findByUsername(SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName()).getUsername()
+                    .getContext()
+                    .getAuthentication()
+                    .getName()).getId().toString()
         );
-        if (sessionPlans.isEmpty()) {
+        if (fitnessPlan == null) {
             return "fitness-plan/index";
         }
+
         return "redirect:/session-plan";
     }
 }

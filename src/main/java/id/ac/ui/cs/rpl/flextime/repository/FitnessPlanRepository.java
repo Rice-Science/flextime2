@@ -11,4 +11,6 @@ import java.util.UUID;
 @Repository
 public interface FitnessPlanRepository extends JpaRepository<FitnessPlan, UUID> {
     List<FitnessPlan> findByCustomer(User customer);
+
+    FitnessPlan findFitnessPlanByCustomer_Id(UUID customerId);
 }
