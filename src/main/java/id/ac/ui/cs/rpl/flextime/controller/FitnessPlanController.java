@@ -38,10 +38,10 @@ public class FitnessPlanController {
     @GetMapping("")
     public String index(Model model) {
         List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByUser(
-                userService.findByUsername(SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getName()).getUsername()
+            userService.findByUsername(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName()).getUsername()
         );
         if (sessionPlans.isEmpty()) {
             return "fitness-plan/index";
