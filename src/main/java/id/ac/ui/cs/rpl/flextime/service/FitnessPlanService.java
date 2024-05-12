@@ -8,4 +8,5 @@ public interface FitnessPlanService {
     FitnessPlan saveFitnessPlan(FitnessPlan fitnessPlan);
     Optional<FitnessPlan> getFitnessPlanById(String id);
     void deleteFitnessPlanById(String id);
+    FitnessPlan getFitnessPlanByCustomerId(String customerId);
 }

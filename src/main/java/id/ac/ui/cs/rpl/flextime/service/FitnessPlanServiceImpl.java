@@ -27,4 +27,9 @@ public class FitnessPlanServiceImpl implements FitnessPlanService {
     public void deleteFitnessPlanById(String id) {
         fitnessPlanRepository.deleteById(UUID.fromString(id));
     }
+
+    @Override
+    public FitnessPlan getFitnessPlanByCustomerId(String customerId) {
+        return fitnessPlanRepository.findFitnessPlanByCustomer_Id(UUID.fromString(customerId));
+    }
 }
