@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface SessionPlanService {
     public SessionPlan saveSessionPlan(SessionPlan sessionPlan);
     public Optional<SessionPlan> getSessionPlanById(String id);
-    public List<SessionPlan> getAllSessionPlansByUser(String id);
+    public List<SessionPlan> getAllSessionPlansByFitnessPlan(String id);
     public void deleteSessionPlanById(String id);
+    public List<SessionPlan> getAllSessionPlansByUser(String username);
 }
