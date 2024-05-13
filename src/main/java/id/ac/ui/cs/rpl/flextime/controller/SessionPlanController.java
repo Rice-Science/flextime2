@@ -3,10 +3,8 @@ package id.ac.ui.cs.rpl.flextime.controller;
 import id.ac.ui.cs.rpl.flextime.model.Customization;
 import id.ac.ui.cs.rpl.flextime.model.SessionPlan;
 import id.ac.ui.cs.rpl.flextime.model.Training;
-import id.ac.ui.cs.rpl.flextime.service.CustomizationService;
-import id.ac.ui.cs.rpl.flextime.service.SessionPlanService;
-import id.ac.ui.cs.rpl.flextime.service.TrainingService;
-import id.ac.ui.cs.rpl.flextime.service.UserService;
+import id.ac.ui.cs.rpl.flextime.model.User;
+import id.ac.ui.cs.rpl.flextime.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,11 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.UUID;
+
 @RequestMapping("/session-plan")
 @Controller
 public class SessionPlanController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private FitnessPlanService fitnessPlanService;
     @Autowired
     private SessionPlanService sessionPlanService;
     @Autowired
@@ -50,17 +52,15 @@ public class SessionPlanController {
     }
 
     @PostMapping("/pick-training-type")
-    public String pickTrainingTypePost(@ModelAttribute SessionPlan sessionPlan, @Param("trainingType") String trainingType, RedirectAttributes redirectAttributes) {
-        sessionPlan.setTrainingType(trainingType);
+    public String pickTrainingTypePost(@ModelAttribute SessionPlan sessionPlan, RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("sessionPlan", sessionPlan);
         return "redirect:/session-plan/pick-training";
     }
 
     @GetMapping("/pick-training")
     public String pickTrainingPage(Model model) {
-        // get the session plan from the redirectAttributes
         SessionPlan sessionPlan = (SessionPlan) model.getAttribute("sessionPlan");
-        List<Training> trainings = trainingService.getAllTrainings();
+        List<Training> trainings = trainingService.getAllTrainingsByTrainingType(sessionPlan.getTrainingType());
         model.addAttribute("sessionPlan", sessionPlan);
         model.addAttribute("trainings", trainings);
         return "session-plan/pickTraining";
@@ -70,7 +70,6 @@ public class SessionPlanController {
     public String pickTrainingPost(@ModelAttribute SessionPlan sessionPlan, @Param("trainingId") String trainingId, RedirectAttributes redirectAttributes) {
         Training training = trainingService.getTrainingById(trainingId).get();
         sessionPlan.addTraining(training);
-        sessionPlanService.saveSessionPlan(sessionPlan);
         redirectAttributes.addFlashAttribute("sessionPlan", sessionPlan);
         redirectAttributes.addFlashAttribute("training", training);
         return "redirect:/session-plan/pick-customization";
