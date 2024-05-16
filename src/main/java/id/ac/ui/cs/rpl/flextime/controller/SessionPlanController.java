@@ -43,13 +43,14 @@ public class SessionPlanController {
     }
 
     @PostMapping("/pick-training-type")
-    public String pickTrainingTypePost(@ModelAttribute("sessionPlan") SessionPlan sessionPlan) {
+    public String pickTrainingTypePost(@ModelAttribute("sessionPlan") SessionPlan sessionPlan, @RequestParam("trainingType") String trainingType) {
         User user = userService.findByUsername(SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName());
         FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(user.getId().toString());
         sessionPlan.setFitnessPlan(fitnessPlan);
+        sessionPlan.setTrainingType(trainingType);
         sessionPlanService.saveSessionPlan(sessionPlan);
         return "redirect:/session-training/" + sessionPlan.getId();
     }

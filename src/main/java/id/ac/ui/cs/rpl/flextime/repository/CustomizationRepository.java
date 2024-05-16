@@ -8,5 +8,4 @@ import java.util.UUID;
 
 @Repository
 public interface CustomizationRepository extends JpaRepository<Customization, UUID> {
-    Customization findCustomizationByTraining_Id(UUID trainingId);
 }

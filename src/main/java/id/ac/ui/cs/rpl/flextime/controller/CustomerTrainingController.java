@@ -40,20 +40,12 @@ public class CustomerTrainingController {
 
     @PostMapping("/{sessionPlanId}/add-training/{trainingId}")
     public String addTraining(@PathVariable String sessionPlanId, @PathVariable String trainingId, RedirectAttributes ra) {
-        Training training = trainingService.getTrainingById(trainingId).orElseThrow();
-        SessionPlan sessionPlan = sessionPlanService.getSessionPlanById(sessionPlanId).orElseThrow();
-
-        CustomerTraining customerTraining = new CustomerTraining();
-        customerTraining.setTraining(training);
-        customerTraining.setSessionPlan(sessionPlan);
-        customerTrainingService.save(customerTraining);
-
-        return "redirect:/customization/add/" + customerTraining.getId().toString();
+        return "redirect:/customization/save/" + sessionPlanId + "/" + trainingId;
     }
 
     @PostMapping("/{sessionPlanId}/delete-training/{custTrainingId}")
     public String deleteTraining(@PathVariable String custTrainingId, @PathVariable String sessionPlanId) {
         customerTrainingService.deleteCustomerTrainingById(custTrainingId);
-        return "redirect:/" + sessionPlanId;
+        return "redirect:/session-training/" + sessionPlanId;
     }
 }

@@ -25,10 +25,4 @@ public class CustomizationServiceImpl implements CustomizationService {
     public Customization getCustomizationById(String id) {
         return customizationRepository.findById(UUID.fromString(id)).orElse(null);
     }
-
-    @Override
-    public Customization getCustomizationByTrainingId(String trainingId) {
-        return customizationRepository.findCustomizationByTraining_Id(UUID.fromString(trainingId));
-    }
-
 }
