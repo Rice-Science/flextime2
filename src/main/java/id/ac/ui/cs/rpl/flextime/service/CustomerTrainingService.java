@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CustomerTrainingService {
     CustomerTraining getCustomerTrainingById(String id);
-    List<CustomerTraining> getCustomerTrainingBySessionPlanId(String sessionPlanId);
+    List<CustomerTraining> getCustomerTrainingsBySessionPlanId(String sessionPlanId);
     void deleteCustomerTrainingById(String id);
     CustomerTraining save(CustomerTraining customerTraining);
 }
