@@ -1,5 +1,6 @@
 package id.ac.ui.cs.rpl.flextime.service;
 
+import id.ac.ui.cs.rpl.flextime.model.ClassSchedules;
 import id.ac.ui.cs.rpl.flextime.model.TestSchedules;
 import id.ac.ui.cs.rpl.flextime.repository.TestSchedulesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,10 @@ public class TestSchedulesServiceImpl implements TestSchedulesService{
             classSchedules.setTestSchedulesDate(updatedClass.getTestSchedulesDate());
             testRepository.save(classSchedules);
         }
+    }
+
+    @Override
+    public List<TestSchedules> findTestByCustomerId(String customerId) {
+        return testRepository.findTestByCustomer_Id(UUID.fromString(customerId));
     }
 }
