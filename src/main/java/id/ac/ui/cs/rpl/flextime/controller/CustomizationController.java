@@ -1,11 +1,10 @@
 package id.ac.ui.cs.rpl.flextime.controller;
 
+import id.ac.ui.cs.rpl.flextime.model.CustomerTraining;
 import id.ac.ui.cs.rpl.flextime.model.Customization;
-import id.ac.ui.cs.rpl.flextime.model.SessionPlan;
-import id.ac.ui.cs.rpl.flextime.model.Training;
+import id.ac.ui.cs.rpl.flextime.service.CustomerTrainingService;
 import id.ac.ui.cs.rpl.flextime.service.CustomizationService;
 import id.ac.ui.cs.rpl.flextime.service.SessionPlanService;
-import id.ac.ui.cs.rpl.flextime.service.TrainingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,22 +18,37 @@ public class CustomizationController {
     @Autowired
     private SessionPlanService sessionPlanService;
     @Autowired
-    private TrainingService trainingService;
+    private CustomerTrainingService customerTrainingService;
 
-    @GetMapping("/{sessionPlanId}/{trainingId}")
-    public String createCustomizationPage(@PathVariable String sessionPlanId, @PathVariable String trainingId, Model model) {
+    @GetMapping("/add/{customerTrainingId}")
+    public String createCustomizationPage(@PathVariable String customerTrainingId, Model model) {
         Customization customization = new Customization();
         model.addAttribute(customization);
         return "customization/create";
     }
 
-    @PostMapping("/{sessionPlanId}/{trainingId}")
-    public String createCustomizationPost(@PathVariable String sessionPlanId, @PathVariable String trainingId, @ModelAttribute("customization") Customization customization ) {
-        Training training  = trainingService.getTrainingById(trainingId).orElseThrow();
-        SessionPlan sessionPlan = sessionPlanService.getSessionPlanById(sessionPlanId).orElseThrow();
-        customization.setSessionPlan(sessionPlan);
-        customization.setTraining(training);
+    @PostMapping("/add/{customerTrainingId}")
+    public String createCustomizationPost(@PathVariable String customerTrainingId, @ModelAttribute("customization") Customization customization ) {
+        CustomerTraining customerTraining = customerTrainingService.getCustomerTrainingById(customerTrainingId);
+
+        customization.setTraining(customerTraining);
         customizationService.saveCustomization(customization);
-        return "redirect:/session-training";
+
+        return "redirect:/session-training/" + customerTraining.getSessionPlan().getId().toString();
+    }
+
+    @GetMapping("/edit/{customerTrainingId}")
+    public String editCustomizationPage(@PathVariable String customerTrainingId, Model model) {
+        Customization customization = customizationService.getCustomizationByTrainingId(customerTrainingId);
+        model.addAttribute("customization", customization);
+        return "customization/edit";
+    }
+
+    @PostMapping("/edit/{customerTrainingId}")
+    public String editCustomizationPost(@ModelAttribute("customization") Customization customization, @PathVariable String customerTrainingId) {
+        CustomerTraining customerTraining = customerTrainingService.getCustomerTrainingById(customerTrainingId);
+        customization.setTraining(customerTraining);
+        customizationService.saveCustomization(customization);
+        return "redirect:/session-training/" + customerTraining.getSessionPlan().getId().toString();
     }
 }

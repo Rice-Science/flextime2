@@ -15,13 +15,9 @@ public class Customization {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "training_id", nullable = false)
-    private Training training;
-
-    @ManyToOne
-    @JoinColumn(name = "session_plan_id", nullable = false)
-    private SessionPlan sessionPlan;
+    @OneToOne
+    @JoinColumn(name = "customer_training_id", nullable = false)
+    private CustomerTraining training;
 
     private int setCount;
     private int repCount;

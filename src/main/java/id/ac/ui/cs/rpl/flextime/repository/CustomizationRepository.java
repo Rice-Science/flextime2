@@ -8,5 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface CustomizationRepository extends JpaRepository<Customization, UUID> {
-    Customization findCustomizationBySessionPlan_Id(UUID sessionPlanId);
+    Customization findCustomizationByTraining_Id(UUID trainingId);
 }

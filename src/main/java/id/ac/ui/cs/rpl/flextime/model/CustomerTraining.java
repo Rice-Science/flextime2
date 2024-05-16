@@ -4,21 +4,21 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "session_plan")
+@Table(name = "customer_training")
 @Getter @Setter
-public class SessionPlan {
+public class CustomerTraining {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String trainingType;
+    @ManyToOne
+    @JoinColumn(name = "training_id")
+    private Training training;
 
     @ManyToOne
-    @JoinColumn(name = "fitness_plan_id", nullable = false)
-    private FitnessPlan fitnessPlan;
+    @JoinColumn(name = "session_plan_id")
+    private SessionPlan sessionPlan;
 }
