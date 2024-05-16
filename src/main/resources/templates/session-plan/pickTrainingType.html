@@ -12,34 +12,21 @@
     <h1 class="text-6xl font-bold text-center text-tokyo-night-variable transition ease-in-out hover:scale-110 hover:text-white hover:-translate-y-1 duration-150">
         Pick your training type
     </h1>
-    <form method="POST" th:action="@{/session-plan/pick-training-type}" class="self-center" th:object="${sessionPlan}" id="trainingForm">
-        <input type="hidden" name="trainingType" id="trainingType" th:field="*{trainingType}"/>
+    <form method="POST" th:action="@{/session-plan/pick-training-type}" class="self-center">
         <div class="flex flex-row">
-            <button type="button" onclick="submitTrainingType('HIIT')" class="mx-3 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-lg font-medium text-tokyo-night-variable rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 transition ease-in-out hover:scale-110 hover:-translate-y-1 duration-150 hover:text-white mt-5">
-                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-tokyo-night-bg rounded-md group-hover:bg-opacity-0 text-white">
-                    HIIT
-                </span>
+            <button type="submit" name="trainingType" value="HIIT" class="mx-3 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-lg font-medium text-tokyo-night-variable rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 transition ease-in-out hover:scale-110 hover:-translate-y-1 duration-150 hover:text-white mt-5">
+                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-tokyo-night-bg rounded-md group-hover:bg-opacity-0 text-white">HIIT</span>
             </button>
-            <button type="button" onclick="submitTrainingType('STRENGTH')" class="mx-3 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-lg font-medium text-tokyo-night-variable rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 transition ease-in-out hover:scale-110 hover:-translate-y-1 duration-150 hover:text-white mt-5">
-                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-tokyo-night-bg rounded-md group-hover:bg-opacity-0 text-white">
-                    Strength
-                </span>
+            <button type="submit" name="trainingType" value="STRENGTH" class="mx-3 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-lg font-medium text-tokyo-night-variable rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 transition ease-in-out hover:scale-110 hover:-translate-y-1 duration-150 hover:text-white mt-5">
+                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-tokyo-night-bg rounded-md group-hover:bg-opacity-0 text-white">Strength</span>
             </button>
-            <button type="button" onclick="submitTrainingType('CARDIO')" class="mx-3 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-lg font-medium text-tokyo-night-variable rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 transition ease-in-out hover:scale-110 hover:-translate-y-1 duration-150 hover:text-white mt-5">
-                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-tokyo-night-bg rounded-md group-hover:bg-opacity-0 text-white">
-                    Cardio
-                </span>
+            <button type="submit" name="trainingType" value="CARDIO" class="mx-3 relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-lg font-medium text-tokyo-night-variable rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800 transition ease-in-out hover:scale-110 hover:-translate-y-1 duration-150 hover:text-white mt-5">
+                <span class="relative px-5 py-2.5 transition-all ease-in duration-75 bg-tokyo-night-bg rounded-md group-hover:bg-opacity-0 text-white">Cardio</span>
             </button>
         </div>
     </form>
+
 </div>
 
-
-<script>
-    function submitTrainingType(type) {
-        document.getElementById('trainingType').value = type;
-        document.getElementById('trainingForm').submit();
-    }
-</script>
 </body>
 </html>
