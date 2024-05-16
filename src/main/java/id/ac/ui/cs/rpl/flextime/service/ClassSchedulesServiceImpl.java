@@ -1,5 +1,6 @@
 package id.ac.ui.cs.rpl.flextime.service;
 
+import id.ac.ui.cs.rpl.flextime.model.AssignmentSchedules;
 import id.ac.ui.cs.rpl.flextime.model.ClassSchedules;
 import id.ac.ui.cs.rpl.flextime.repository.ClassSchedulesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,10 @@ public class ClassSchedulesServiceImpl implements ClassSchedulesService{
             classSchedules.setClassSchedulesDate(updatedClass.getClassSchedulesDate());
             classRepository.save(classSchedules);
         }
+    }
+
+    @Override
+    public List<ClassSchedules> findClassByCustomerId(String customerId) {
+        return classRepository.findClassByCustomer_Id(UUID.fromString(customerId));
     }
 }

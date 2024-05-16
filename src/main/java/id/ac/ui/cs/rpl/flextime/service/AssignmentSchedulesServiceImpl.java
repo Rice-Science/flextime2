@@ -43,4 +43,9 @@ public class AssignmentSchedulesServiceImpl implements AssignmentSchedulesServic
             assignmentRepository.save(assignment);
         }
     }
+
+    @Override
+    public List<AssignmentSchedules> findAssignmentByCustomerId(String customerId) {
+        return assignmentRepository.findAssignmentByCustomer_Id(UUID.fromString(customerId));
+    }
 }

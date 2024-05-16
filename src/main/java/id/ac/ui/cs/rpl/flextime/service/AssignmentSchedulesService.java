@@ -11,4 +11,5 @@ public interface AssignmentSchedulesService {
     public void delete(String id);
     Optional<AssignmentSchedules> findById(String id);
     public void update(String id, AssignmentSchedules assignment);
+    List<AssignmentSchedules> findAssignmentByCustomerId(String customerId);
 }

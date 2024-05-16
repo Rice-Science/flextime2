@@ -6,6 +6,7 @@ import id.ac.ui.cs.rpl.flextime.service.AssignmentSchedulesService;
 import id.ac.ui.cs.rpl.flextime.service.ClassSchedulesService;
 import id.ac.ui.cs.rpl.flextime.service.TestSchedulesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import id.ac.ui.cs.rpl.flextime.service.UserService;
 import org.springframework.ui.Model;
@@ -30,12 +31,29 @@ public class CoursePlanController {
 
     @GetMapping("/list")
     public String assignmentListPage (Model model) {
-        List<AssignmentSchedules> allAssignments = assignmentService.findAll();
-        List<ClassSchedules> allClass = classService.findAll();
-        List<TestSchedules> allTest = testService.findAll();
+        List<AssignmentSchedules> allAssignments = assignmentService.findAssignmentByCustomerId(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName()).getId().toString()
+        );
+        List<ClassSchedules> allClass = classService.findClassByCustomerId(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName()).getId().toString()
+        );
+        List<TestSchedules> allTest = testService.findTestByCustomerId(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName()).getId().toString()
+        );
+
         model.addAttribute("assignments", allAssignments);
         model.addAttribute("class", allClass);
         model.addAttribute("test", allTest);
+
         return "CoursePlan/CoursePlan";
     }
 
@@ -48,6 +66,10 @@ public class CoursePlanController {
 
     @PostMapping("/create-assignments")
     public String createAssignmentPost(@ModelAttribute AssignmentSchedules assignment) {
+        assignment.setCustomer(userService.findByUsername(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName()));
         assignmentService.create(assignment);
         return "redirect:course-plan/list";
     }
@@ -61,6 +83,12 @@ public class CoursePlanController {
 
     @PostMapping("/create-class")
     public String createClassPost(@ModelAttribute ClassSchedules classSchedules) {
+        classSchedules.setCustomer(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName())
+        );
         classService.create(classSchedules);
         return "redirect:course-plan/list";
     }
@@ -74,6 +102,12 @@ public class CoursePlanController {
 
     @PostMapping("/create-test")
     public String createTestPost(@ModelAttribute TestSchedules testSchedules) {
+        testSchedules.setCustomer(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName())
+        );
         testService.create(testSchedules);
         return "redirect:course-plan/list";
     }
