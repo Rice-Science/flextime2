@@ -10,6 +10,4 @@ import java.util.UUID;
 @Repository
 public interface SessionPlanRepository extends JpaRepository<SessionPlan, UUID> {
     List<SessionPlan> findSessionPlansByFitnessPlan_Id(UUID fitnessPlanId);
-
-    List<SessionPlan> findSessionPlansByFitnessPlan_Customer_Username(String username);
 }

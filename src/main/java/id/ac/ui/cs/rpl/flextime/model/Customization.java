@@ -16,10 +16,6 @@ public class Customization {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private User customer;
-
-    @ManyToOne
     @JoinColumn(name = "training_id", nullable = false)
     private Training training;
 
