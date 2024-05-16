@@ -21,5 +21,5 @@ public class Customization {
 
     private int setCount;
     private int repCount;
-    private Duration timeCount;
+    private int durationInSeconds;
 }
