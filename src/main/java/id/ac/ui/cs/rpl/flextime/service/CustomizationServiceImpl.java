@@ -22,13 +22,13 @@ public class CustomizationServiceImpl implements CustomizationService {
     }
 
     @Override
-    public Customization getCustomizationBySessionPlanId(String sessionPlanId) {
-        return customizationRepository.findCustomizationBySessionPlan_Id(UUID.fromString(sessionPlanId));
+    public Customization getCustomizationById(String id) {
+        return customizationRepository.findById(UUID.fromString(id)).orElse(null);
     }
 
     @Override
-    public Customization getCustomizationById(String id) {
-        return customizationRepository.findById(UUID.fromString(id)).orElse(null);
+    public Customization getCustomizationByTrainingId(String trainingId) {
+        return customizationRepository.findCustomizationByTraining_Id(UUID.fromString(trainingId));
     }
 
 }

@@ -19,10 +19,6 @@ public class Customization {
     @JoinColumn(name = "customer_training_id", nullable = false)
     private CustomerTraining training;
 
-    @ManyToOne
-    @JoinColumn(name = "session_plan_id", nullable = false)
-    private SessionPlan sessionPlan;
-
     private int setCount;
     private int repCount;
     private Duration timeCount;
