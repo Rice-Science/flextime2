@@ -32,6 +32,7 @@ public class SessionPlanController {
             return "session-plan/indexNoSession";
         }
         model.addAttribute("sessionPlans", sessionPlans);
+        model.addAttribute("service", sessionPlanService);
         return "session-plan/index";
     }
 
@@ -54,4 +55,11 @@ public class SessionPlanController {
         sessionPlanService.saveSessionPlan(sessionPlan);
         return "redirect:/session-training/" + sessionPlan.getId();
     }
+
+    @PostMapping("/delete/{id}")
+    public String deleteSessionPlan(@PathVariable String id) {
+        sessionPlanService.deleteSessionPlanById(id);
+        return "redirect:/session-plan";
+    }
+
 }
