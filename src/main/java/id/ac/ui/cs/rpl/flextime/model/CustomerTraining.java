@@ -21,4 +21,8 @@ public class CustomerTraining {
     @ManyToOne
     @JoinColumn(name = "session_plan_id")
     private SessionPlan sessionPlan;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "customization_id")
+    private Customization customization;
 }

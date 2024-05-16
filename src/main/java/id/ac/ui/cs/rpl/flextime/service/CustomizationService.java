@@ -6,6 +6,4 @@ public interface CustomizationService {
     public void deleteCustomizationById(String id);
     public Customization getCustomizationById(String id);
     public Customization saveCustomization(Customization customization);
-    public Customization getCustomizationByTrainingId(String trainingId);
-
 }

@@ -15,10 +15,6 @@ public class Customization {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "customer_training_id", nullable = false)
-    private CustomerTraining training;
-
     private int setCount;
     private int repCount;
     private int durationInSeconds;
