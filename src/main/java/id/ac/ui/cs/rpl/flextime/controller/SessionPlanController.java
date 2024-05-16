@@ -1,20 +1,14 @@
 package id.ac.ui.cs.rpl.flextime.controller;
 
-import id.ac.ui.cs.rpl.flextime.model.Customization;
-import id.ac.ui.cs.rpl.flextime.model.SessionPlan;
-import id.ac.ui.cs.rpl.flextime.model.Training;
-import id.ac.ui.cs.rpl.flextime.model.User;
+import id.ac.ui.cs.rpl.flextime.model.*;
 import id.ac.ui.cs.rpl.flextime.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.UUID;
 
 @RequestMapping("/session-plan")
 @Controller
@@ -22,21 +16,18 @@ public class SessionPlanController {
     @Autowired
     private UserService userService;
     @Autowired
-    private FitnessPlanService fitnessPlanService;
-    @Autowired
     private SessionPlanService sessionPlanService;
     @Autowired
-    private TrainingService trainingService;
-    @Autowired
-    private CustomizationService customizationService;
+    private FitnessPlanService fitnessPlanService;
+
     @GetMapping("")
     public String index(Model model) {
-        List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByUser(
-            userService.findByUsername(SecurityContextHolder
-                    .getContext()
-                    .getAuthentication()
-                    .getName()).getUsername()
-        );
+        User user = userService.findByUsername(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName());
+        FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(user.getId().toString());
+        List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByFitnessPlan(fitnessPlan.getId().toString());
         if (sessionPlans.isEmpty()) {
             return "session-plan/indexNoSession";
         }
@@ -52,46 +43,14 @@ public class SessionPlanController {
     }
 
     @PostMapping("/pick-training-type")
-    public String pickTrainingTypePost(@ModelAttribute SessionPlan sessionPlan, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("sessionPlan", sessionPlan);
-        return "redirect:/session-plan/pick-training";
+    public String pickTrainingTypePost(@ModelAttribute("sessionPlan") SessionPlan sessionPlan) {
+        User user = userService.findByUsername(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName());
+        FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(user.getId().toString());
+        sessionPlan.setFitnessPlan(fitnessPlan);
+        sessionPlanService.saveSessionPlan(sessionPlan);
+        return "redirect:/session-training/" + sessionPlan.getId();
     }
-
-    @GetMapping("/pick-training")
-    public String pickTrainingPage(Model model) {
-        SessionPlan sessionPlan = (SessionPlan) model.getAttribute("sessionPlan");
-        List<Training> trainings = trainingService.getAllTrainingsByTrainingType(sessionPlan.getTrainingType());
-        model.addAttribute("sessionPlan", sessionPlan);
-        model.addAttribute("trainings", trainings);
-        return "session-plan/pickTraining";
-    }
-
-    @PostMapping("/pick-training")
-    public String pickTrainingPost(@ModelAttribute SessionPlan sessionPlan, @Param("trainingId") String trainingId, RedirectAttributes redirectAttributes) {
-        Training training = trainingService.getTrainingById(trainingId).get();
-        sessionPlan.addTraining(training);
-        redirectAttributes.addFlashAttribute("sessionPlan", sessionPlan);
-        redirectAttributes.addFlashAttribute("training", training);
-        return "redirect:/session-plan/pick-customization";
-    }
-
-    @GetMapping("/pick-customization")
-    public String pickCustomizationPage(Model model) {
-        Training training = (Training) model.getAttribute("training");
-        Customization customization = new Customization();
-        SessionPlan sessionPlan = (SessionPlan) model.getAttribute("sessionPlan");
-        model.addAttribute("customization", customization);
-        model.addAttribute("sessionPlan", sessionPlan);
-        model.addAttribute("training", training);
-        return "session-plan/pickCustomization";
-    }
-
-    @PostMapping("/pick-customization")
-    public String pickCustomizationPost(@ModelAttribute Customization customization, @ModelAttribute SessionPlan sessionPlan, @ModelAttribute Training training) {
-        customization.setSessionPlan(sessionPlan);
-        customization.setTraining(training);
-        customizationService.saveCustomization(customization);
-        return "redirect:/session-plan";
-    }
-
 }

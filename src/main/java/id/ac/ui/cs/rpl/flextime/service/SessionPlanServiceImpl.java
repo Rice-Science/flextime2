@@ -33,9 +33,4 @@ public class SessionPlanServiceImpl implements SessionPlanService{
     public List<SessionPlan> getAllSessionPlansByFitnessPlan(String id) {
         return sessionPlanRepository.findSessionPlansByFitnessPlan_Id(UUID.fromString(id));
     }
-
-    @Override
-    public List<SessionPlan> getAllSessionPlansByUser(String username) {
-        return sessionPlanRepository.findSessionPlansByFitnessPlan_Customer_Username(username);
-    }
 }

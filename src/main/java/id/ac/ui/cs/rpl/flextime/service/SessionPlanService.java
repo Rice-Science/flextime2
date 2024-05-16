@@ -10,5 +10,4 @@ public interface SessionPlanService {
     public Optional<SessionPlan> getSessionPlanById(String id);
     public List<SessionPlan> getAllSessionPlansByFitnessPlan(String id);
     public void deleteSessionPlanById(String id);
-    public List<SessionPlan> getAllSessionPlansByUser(String username);
 }
