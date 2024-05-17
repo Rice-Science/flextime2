@@ -2,6 +2,7 @@ package id.ac.ui.cs.rpl.flextime.controller;
 
 import id.ac.ui.cs.rpl.flextime.model.FitnessPlan;
 import id.ac.ui.cs.rpl.flextime.model.SessionPlan;
+import id.ac.ui.cs.rpl.flextime.model.User;
 import id.ac.ui.cs.rpl.flextime.service.FitnessPlanService;
 import id.ac.ui.cs.rpl.flextime.service.SessionPlanService;
 import id.ac.ui.cs.rpl.flextime.service.UserService;
@@ -35,11 +36,19 @@ public class FitnessPlanController {
 
     @GetMapping("")
     public String index() {
+        User user  = userService.findByUsername(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName());
+        if (user == null) {
+            return "redirect:/auth/login";
+        }
+
         FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(
             userService.findByUsername(SecurityContextHolder
-                    .getContext()
-                    .getAuthentication()
-                    .getName()).getId().toString()
+                .getContext()
+                .getAuthentication()
+                .getName()).getId().toString()
         );
         if (fitnessPlan == null) {
             return "fitness-plan/index";
