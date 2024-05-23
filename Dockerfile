@@ -21,4 +21,4 @@ COPY --from=builder --chown=${USER_UID}:${USER_GID} /src/flextime/build/libs/*.j
 EXPOSE 8080
 
 ENTRYPOINT ["java"]
-CMD ["-jar", "app.jar", "--server.port=8000"]
+CMD ["-jar", "app.jar", "--server.port=8080"]
