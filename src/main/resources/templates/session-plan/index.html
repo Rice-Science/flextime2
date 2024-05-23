@@ -45,6 +45,12 @@
                             <span th:if="${service.getTrainingCount(sessionPlan.id) != 1}" th:text="${service.getTrainingCount(sessionPlan.id)} + ' trainings added'"></span>
                         </p>
                     </div>
+                    <div class="flex items-center mt-1">
+                        <p class="text-xs font-semibold px-2 py-1 bg-blue-100 text-blue-900 rounded-lg mt-2">
+                            <span th:if="${service.getTotalDurationInSeconds(sessionPlan.id) % 60 != 0}" th:text="${service.getTotalDurationInSeconds(sessionPlan.id) / 60} + 'm ' + ${service.getTotalDurationInSeconds(sessionPlan.id) % 60} + 's'"></span>
+                            <span th:if="${service.getTotalDurationInSeconds(sessionPlan.id) % 60 == 0}" th:text="${service.getTotalDurationInSeconds(sessionPlan.id) % 60} + 's'"></span>
+                        </p>
+                    </div>
                     <form th:action="@{/session-plan/delete/{id}(id=${sessionPlan.id})}" class="absolute bottom-0 right-0 p-5" method="post">
                         <button type="submit" class="inline-flex items-center px-3 text-sm font-medium text-white rounded-lg bg-red-600 py-2 transition ease-in-out hover:scale-125 origin-bottom-right duration-150 hover:bg-red-600">
                             Delete
