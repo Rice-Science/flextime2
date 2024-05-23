@@ -25,4 +25,11 @@ public class CustomerTraining {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "customization_id")
     private Customization customization;
+
+    public int getDurationInSeconds() {
+        int sets = this.customization.getSetCount();
+        int reps = this.customization.getRepCount();
+        int duration = this.customization.getDurationInSeconds();
+        return sets * reps * duration;
+    }
 }

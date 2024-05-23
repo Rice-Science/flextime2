@@ -49,4 +49,14 @@ public class SessionPlanServiceImpl implements SessionPlanService{
         List<CustomerTraining> customerTrainings = customerTrainingRepository.findCustomerTrainingsBySessionPlan_Id(UUID.fromString(id));
         return customerTrainings.size();
     }
+
+    @Override
+    public int getTotalDurationInSeconds(String id) {
+        List<CustomerTraining> customerTrainings = customerTrainingRepository.findCustomerTrainingsBySessionPlan_Id(UUID.fromString(id));
+        int totalTime = 0;
+        for (CustomerTraining customerTraining : customerTrainings) {
+            totalTime += customerTraining.getDurationInSeconds();
+        }
+        return totalTime;
+    }
 }
