@@ -27,9 +27,12 @@ public class CustomizationController {
 
     @GetMapping("/save/{sessionPlanId}/{trainingId}")
     public String createCustomizationPage(@PathVariable String sessionPlanId, @PathVariable String trainingId, Model model) {
+        CustomerTraining customerTraining = new CustomerTraining();
+        Training training = trainingService.getTrainingById(trainingId).orElseThrow();
+        model.addAttribute("customerTraining", customerTraining);
         model.addAttribute("customization", new Customization());
         model.addAttribute("sessionPlanId", sessionPlanId);
-        model.addAttribute("trainingId", trainingId);
+        model.addAttribute("training", training);
         return "customization/create";
     }
 
@@ -52,8 +55,9 @@ public class CustomizationController {
     @GetMapping("/edit/{customerTrainingId}")
     public String editCustomizationPage(@PathVariable String customerTrainingId, Model model) {
         CustomerTraining customerTraining = customerTrainingService.getCustomerTrainingById(customerTrainingId);
-        model.addAttribute("customization", customerTraining.getCustomization());
-        model.addAttribute("customerTrainingId", customerTrainingId);
+        Customization customization = customerTraining.getCustomization();
+        model.addAttribute("training", customerTraining);
+        model.addAttribute("customization", customization);
         return "customization/edit";
     }
 

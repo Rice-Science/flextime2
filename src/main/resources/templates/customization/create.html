@@ -1,39 +1,48 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Customization</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/output.css">
 </head>
-<body class="dark bg-tokyo-night-bg text-white">
+<body class="bg-tokyo-night-bg dark flex flex-col items-center justify-center h-full">
 <div th:replace="navbar :: navbar">
 </div>
 <div class="">
-<section class="mt-24">
-    <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-        <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">Customize training</h2>
-        <form th:action="@{/customization/save/{sessionPlanId}/{trainingId}(sessionPlanId=${sessionPlanId}, trainingId=${trainingId})}" method="post" th:object="${customization}">
-            <div class="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                <div class="sm:col-span-2">
-                    <label for="setCount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set Count</label>
-                    <input th:field="*{setCount}" th:value="${customization.setCount}" type="number" name="setCount" id="setCount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type set count" required="">
-                </div>
-                <div class="sm:col-span-2">
-                    <label for="repCount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Rep Count</label>
-                    <input th:field="*{repCount}" th:value="${customization.repCount}" type="number" name="repCount" id="repCount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type repetition count" required="">
-                </div>
-                <div class="sm:col-span-2">
-                    <label for="duration" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Duration (in seconds)</label>
-                    <input th:field="*{durationInSeconds}" th:value="${customization.durationInSeconds}" type="number" name="duration" id="duration" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type duration in seconds" required="">
-                </div>
+    <section>
+        <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
+            <h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
+                <span th:text="'Customize ' + ${training.title}">
+                </span>
+            </h2>
+            <div class="flex flex-row">
+                <form th:action="@{/customization/save/{sessionPlanId}/{trainingId}(trainingId=${trainingId}, sessionPlanId=${sessionPlanId})}" method="post" th:object="${customization}">
+                    <div class="grid gap-4 sm:grid-cols-2 sm:gap-6 w-64">
+                        <div class="sm:col-span-2">
+                            <label for="setCount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Set Count</label>
+                            <input th:field="*{setCount}" type="number" name="setCount" id="setCount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type set count" required="">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="repCount" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Rep Count</label>
+                            <input th:field="*{repCount}" type="number" name="repCount" id="repCount" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type repetition count" required="">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="duration" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Duration (in seconds)</label>
+                            <input th:field="*{durationInSeconds}" type="number" name="duration" id="duration" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type duration in seconds" required="">
+                        </div>
+                    </div>
+                    <button type="submit" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 hover:bg-blue-800">
+                        Customize
+                    </button>
+                </form>
+                <p class="px-5 mt-6 ml-5 text-gray-500">
+                    <span th:text="${training.getDescription()}">
+                    </span>
+                </p>
             </div>
-            <button type="submit" class="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-blue-600 rounded-lg focus:ring-4 hover:bg-blue-800">
-                Customize
-            </button>
-        </form>
-    </div>
-</section>
+        </div>
+    </section>
 </div>
 
 
