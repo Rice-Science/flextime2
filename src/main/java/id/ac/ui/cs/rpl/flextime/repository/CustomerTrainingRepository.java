@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface CustomerTrainingRepository extends JpaRepository<CustomerTraining, UUID> {
     CustomerTraining getCustomerTrainingById(UUID id);
     List<CustomerTraining> findCustomerTrainingsBySessionPlan_Id(UUID id);
+    void deleteAllBySessionPlan_Id(UUID id);
 }
