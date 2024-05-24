@@ -9,4 +9,5 @@ import java.util.UUID;
 @Repository
 public interface ClassSchedulesRepository extends JpaRepository<ClassSchedules, UUID> {
     List<ClassSchedules> findClassByCustomer_Id(UUID customer_id);
+    List<ClassSchedules> findAllByClassSchedulesDay(String day);
 }

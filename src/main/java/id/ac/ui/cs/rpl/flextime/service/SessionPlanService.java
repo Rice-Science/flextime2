@@ -13,4 +13,5 @@ public interface SessionPlanService {
     public void deleteSessionPlanById(String id);
     public int getTrainingCount(String id);
     public int getTotalDurationInSeconds(String id);
+    public List<SessionPlan> getAllSessionPlansByUsername(String username);
 }

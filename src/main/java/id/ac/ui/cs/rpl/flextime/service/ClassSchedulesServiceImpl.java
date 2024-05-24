@@ -102,4 +102,9 @@ public class ClassSchedulesServiceImpl implements ClassSchedulesService{
     public List<ClassSchedules> findClassByCustomerId(String customerId) {
         return classRepository.findClassByCustomer_Id(UUID.fromString(customerId));
     }
+
+    @Override
+    public List<ClassSchedules> findClassByDay(String day) {
+        return classRepository.findAllByClassSchedulesDay(day);
+    }
 }

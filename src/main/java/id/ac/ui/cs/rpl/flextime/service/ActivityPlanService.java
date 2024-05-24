@@ -10,6 +10,6 @@ public interface ActivityPlanService {
     public SessionSchedule checkSessionPlan(User user, SessionSchedule sessionSchedule) throws Exception;
     public void deleteSessionSchedules(UUID id);
     public void createSessionSchedules(User user, SessionSchedule sessionSchedule) throws Exception;
-    public List<SessionSchedule> findSessionSchedulesByUser_Id(UUID user_id);
+    public List<SessionSchedule> findSessionSchedulesByDayAndByUser_Id(UUID user_id, String day);
 
 }
