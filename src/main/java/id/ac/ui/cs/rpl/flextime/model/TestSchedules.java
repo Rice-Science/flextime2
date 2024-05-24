@@ -61,4 +61,12 @@ public class TestSchedules {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         return testSchedulesEnd.format(formatter);
     }
+
+    public LocalDateTime getStartDate() {
+        return LocalDateTime.of(this.testSchedulesDate,this.testSchedulesStart);
+    }
+
+    public LocalDateTime getEndDate() {
+        return LocalDateTime.of(this.testSchedulesDate,this.testSchedulesEnd);
+    }
 }
