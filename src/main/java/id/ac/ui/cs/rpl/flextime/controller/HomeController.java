@@ -98,7 +98,11 @@ public class HomeController {
         model.addAttribute("testSchedules", testSchedulesHashMap);
         model.addAttribute("assignmentSchedules", assignmentSchedulesHashMap);
         model.addAttribute("sessionSchedules", sessionSchedulesHashMap);
-        model.addAttribute("days", Day.values());
+        List<String> days = new ArrayList<>();
+        for (Day day : Day.values()) {
+            days.add(day.getValue());
+        }
+        model.addAttribute("days", days);
 
         return "home";
     }
