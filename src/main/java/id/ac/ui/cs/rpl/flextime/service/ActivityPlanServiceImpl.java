@@ -5,6 +5,8 @@ import id.ac.ui.cs.rpl.flextime.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -31,12 +33,11 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     private CustomerTrainingRepository customerTrainingRepository;
 
     public SessionSchedule checkSessionPlan(User user, SessionSchedule sessionSchedule) throws Exception {
-
         List<ClassSchedules> classSchedules = classSchedulesRepository.findClassByCustomer_Id(user.getId());
         List<TestSchedules> testSchedules = testSchedulesRepository.findTestByCustomer_Id(user.getId());
         List<CustomerTraining> customerTrainings = customerTrainingRepository.findCustomerTrainingsBySessionPlan_Id(sessionSchedule.getSessionPlan().getId());
         int totalSession = 0;
-        int totalDuration = sessionSchedule.getEnd().getSecond() - sessionSchedule.getStart().getSecond();
+        int totalDuration = sessionSchedule.getEndTime().getSecond() - sessionSchedule.getStartTime().getSecond();
 
         for (CustomerTraining customerTraining: customerTrainings){
             totalSession += customerTraining.getDurationInSeconds();
@@ -49,14 +50,9 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
         for (ClassSchedules classSchedule : classSchedules) {
 
-            if (classSchedule.getStartDate().isBefore(sessionSchedule.getStart()) && classSchedule.getEndDate().isAfter(sessionSchedule.getEnd())) {
+            if (classSchedule.getClassSchedulesStart().isBefore(sessionSchedule.getStartTime()) && classSchedule.getClassSchedulesEnd().isAfter(sessionSchedule.getEndTime()) &&
+            classSchedule.getClassSchedulesDay().equals(sessionSchedule.getDay())) {
                 throw new Exception("You have class at that time");
-            }
-        }
-
-        for (TestSchedules testSchedule: testSchedules){
-            if (testSchedule.getStartDate().isBefore(sessionSchedule.getStart()) && testSchedule.getEndDate().isAfter(sessionSchedule.getEnd())) {
-                throw new Exception("You have test at that time");
             }
         }
 
