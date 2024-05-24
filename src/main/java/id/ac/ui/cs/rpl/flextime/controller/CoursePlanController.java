@@ -137,7 +137,7 @@ public class CoursePlanController {
         return "redirect:/course-plan";
     }
 
-    @DeleteMapping("/delete-class/{id}")
+    @PostMapping("/delete-class/{id}")
     public String deleteClass(@PathVariable String id) {
         classService.delete(id);
         return "redirect:/course-plan";
@@ -171,16 +171,40 @@ public class CoursePlanController {
 
     @GetMapping("/edit-class/{id}")
     public String editClassPage(@PathVariable String id, Model model) {
-        Optional<ClassSchedules> classSchedules = classService.findById(id);
-        model.addAttribute("class", classSchedules );
+        ClassSchedules classSchedules = classService.findById(id).orElseThrow(null);
+        classSchedules.setClassSchedulesDateString(classSchedules.getClassSchedulesDate().toString());
+        classSchedules.setClassSchedulesStartString(classSchedules.getClassSchedulesStart().toString());
+        classSchedules.setClassSchedulesEndString(classSchedules.getClassSchedulesEnd().toString());
+        model.addAttribute("classId", id);
+        model.addAttribute("classSchedules", classSchedules );
         return "CoursePlan/EditClass";
     }
 
-//    @PostMapping("/update-class/{id}")
-//    public String updateClass(@PathVariable String id, @RequestBody ClassSchedules updatedClass) {
-//        classService.update(id, updatedClass);
-//        return "redirect:/course-plan";
-//    }
+    @PostMapping("/update-class/{id}")
+    public String updateClass(@PathVariable String id, @ModelAttribute("classSchedules") ClassSchedules updatedClass) {
+        ClassSchedules classSchedules = classService.findById(id).orElseThrow(null);
+
+        // Convert String date and time fields to LocalDate and LocalTime
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        try {
+            updatedClass.setClassSchedulesDate(LocalDate.parse(updatedClass.getClassSchedulesDateString(), dateFormatter));
+            updatedClass.setClassSchedulesStart(LocalTime.parse(updatedClass.getClassSchedulesStartString(), timeFormatter));
+            updatedClass.setClassSchedulesEnd(LocalTime.parse(updatedClass.getClassSchedulesEndString(), timeFormatter));
+        } catch (DateTimeParseException e) {
+            // Handle parsing errors
+            return "redirect:/course-plan/update-class/" + id + "?error=invalid_date_time_format";
+        }
+
+        updatedClass.setCustomer(userService.findByUsername(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName()));
+        updatedClass.setClassSchedulesId(classSchedules.getClassSchedulesId());
+        classService.update(updatedClass);
+        return "redirect:/course-plan";
+    }
 
     @GetMapping("/edit-test/{id}")
     public String editTestPage(@PathVariable String id, Model model) {

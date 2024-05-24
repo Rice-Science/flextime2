@@ -1,6 +1,5 @@
 package id.ac.ui.cs.rpl.flextime.service;
 
-import id.ac.ui.cs.rpl.flextime.model.AssignmentSchedules;
 import id.ac.ui.cs.rpl.flextime.model.ClassSchedules;
 
 import java.util.List;
@@ -11,6 +10,6 @@ public interface ClassSchedulesService {
     public List<ClassSchedules> findAll();
     public void delete(String id);
     Optional<ClassSchedules> findById(String id);
-//    public void update(String id, ClassSchedules classSchedules);
+    public ClassSchedules update(ClassSchedules classSchedules);
     List<ClassSchedules> findClassByCustomerId(String customerId);
 }
