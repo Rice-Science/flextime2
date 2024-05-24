@@ -12,8 +12,13 @@ import id.ac.ui.cs.rpl.flextime.service.UserService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/course-plan")
@@ -29,7 +34,7 @@ public class CoursePlanController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/list")
+    @GetMapping("")
     public String assignmentListPage (Model model) {
         List<AssignmentSchedules> allAssignments = assignmentService.findAssignmentByCustomerId(
                 userService.findByUsername(SecurityContextHolder
@@ -71,18 +76,31 @@ public class CoursePlanController {
                 .getAuthentication()
                 .getName()));
         assignmentService.create(assignment);
-        return "redirect:course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @GetMapping("/create-class")
     public String createClassPage(Model model){
         ClassSchedules classSchedules = new ClassSchedules();
-        model.addAttribute("class", classSchedules);
+        model.addAttribute("classSchedules", classSchedules);
         return "CoursePlan/CreateClass";
     }
 
     @PostMapping("/create-class")
     public String createClassPost(@ModelAttribute ClassSchedules classSchedules) {
+        // Convert String date and time fields to LocalDate and LocalTime
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        try {
+            classSchedules.setClassSchedulesDate(LocalDate.parse(classSchedules.getClassSchedulesDateString(), dateFormatter));
+            classSchedules.setClassSchedulesStart(LocalTime.parse(classSchedules.getClassSchedulesStartString(), timeFormatter));
+            classSchedules.setClassSchedulesEnd(LocalTime.parse(classSchedules.getClassSchedulesEndString(), timeFormatter));
+        } catch (DateTimeParseException e) {
+            // Handle parsing errors
+            return "redirect:/course-plan/create-class?error=invalid_date_time_format";
+        }
+
         classSchedules.setCustomer(
                 userService.findByUsername(SecurityContextHolder
                         .getContext()
@@ -90,8 +108,9 @@ public class CoursePlanController {
                         .getName())
         );
         classService.create(classSchedules);
-        return "redirect:course-plan/list";
+        return "redirect:/course-plan";
     }
+
 
     @GetMapping("/create-test")
     public String createTestPage(Model model){
@@ -109,38 +128,45 @@ public class CoursePlanController {
                         .getName())
         );
         testService.create(testSchedules);
-        return "redirect:course-plan/list";
+        return "redirect:/course-plan";
     }
 
-    @DeleteMapping("/delete-assignments/{id}")
+    @PostMapping("/delete-assignments/{id}")
     public String deleteAssignment(@PathVariable String id) {
         assignmentService.delete(id);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @DeleteMapping("/delete-class/{id}")
     public String deleteClass(@PathVariable String id) {
         classService.delete(id);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @DeleteMapping("/delete-test/{id}")
     public String deleteTest(@PathVariable String id) {
         testService.delete(id);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @GetMapping("/edit-assignment/{id}")
     public String editAssignmentPage(@PathVariable String id, Model model) {
-        Optional<AssignmentSchedules> assignment = assignmentService.findById(id);
+        AssignmentSchedules assignment = assignmentService.findById(id).orElseThrow(null);
         model.addAttribute("assignment", assignment);
+        model.addAttribute("assignmentId", id);
         return "CoursePlan/EditAssignment";
     }
 
     @PostMapping("/update-assignment/{id}")
-    public String updateAssignment(@PathVariable String id, @RequestBody AssignmentSchedules updatedAssignment) {
-        assignmentService.update(id, updatedAssignment);
-        return "redirect:/course-plan/list";
+    public String updateAssignment(@PathVariable String id, @ModelAttribute("assignment") AssignmentSchedules updatedAssignment) {
+        AssignmentSchedules assignment = assignmentService.findById(id).orElseThrow(null);
+        updatedAssignment.setCustomer(userService.findByUsername(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName()));
+        updatedAssignment.setAssignmentSchedulesId(assignment.getAssignmentSchedulesId());
+        assignmentService.update(updatedAssignment);
+        return "redirect:/course-plan";
     }
 
     @GetMapping("/edit-class/{id}")
@@ -150,11 +176,11 @@ public class CoursePlanController {
         return "CoursePlan/EditClass";
     }
 
-    @PostMapping("/update-class/{id}")
-    public String updateClass(@PathVariable String id, @RequestBody ClassSchedules updatedClass) {
-        classService.update(id, updatedClass);
-        return "redirect:/course-plan/list";
-    }
+//    @PostMapping("/update-class/{id}")
+//    public String updateClass(@PathVariable String id, @RequestBody ClassSchedules updatedClass) {
+//        classService.update(id, updatedClass);
+//        return "redirect:/course-plan";
+//    }
 
     @GetMapping("/edit-test/{id}")
     public String editTestPage(@PathVariable String id, Model model) {
@@ -166,6 +192,6 @@ public class CoursePlanController {
     @PostMapping("/update-test/{id}")
     public String updateTest(@PathVariable String id, @RequestBody TestSchedules updatedTest) {
         testService.update(id, updatedTest);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 }

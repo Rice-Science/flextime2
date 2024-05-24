@@ -3,8 +3,10 @@ package id.ac.ui.cs.rpl.flextime.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
+
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.time.Duration;
 
@@ -16,18 +18,23 @@ public class TestSchedules {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID TestSchedulesId;
+    private UUID testSchedulesId;
 
     @Column(name = "test_name")
-    private String TestSchedulesTitle;
+    private String testSchedulesTitle;
 
     @Column(name = "class_duration")
-    private Duration TestSchedulesDuration;
+    private Duration testSchedulesDuration;
 
     @Column(name = "class_date")
-    private Date TestSchedulesDate;
+    private LocalDateTime testSchedulesDate;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
+
+    public String getFormattedDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy HH:mm");
+        return testSchedulesDate.format(formatter);
+    }
 }

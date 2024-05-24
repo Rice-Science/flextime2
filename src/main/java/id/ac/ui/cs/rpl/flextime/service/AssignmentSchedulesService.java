@@ -10,6 +10,6 @@ public interface AssignmentSchedulesService {
     public List<AssignmentSchedules> findAll();
     public void delete(String id);
     Optional<AssignmentSchedules> findById(String id);
-    public void update(String id, AssignmentSchedules assignment);
+    public AssignmentSchedules update(AssignmentSchedules assignment);
     List<AssignmentSchedules> findAssignmentByCustomerId(String customerId);
 }

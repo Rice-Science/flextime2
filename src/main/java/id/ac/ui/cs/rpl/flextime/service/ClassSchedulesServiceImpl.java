@@ -34,17 +34,17 @@ public class ClassSchedulesServiceImpl implements ClassSchedulesService{
         return classRepository.findById(UUID.fromString(id));
     }
 
-    @Override
-    public void update(String id, ClassSchedules updatedClass) {
-        ClassSchedules classSchedules = classRepository.findById(UUID.fromString(id)).orElse(null);
-
-        if (classSchedules != null) {
-            classSchedules.setClassSchedulesTitle(updatedClass.getClassSchedulesTitle());
-            classSchedules.setClassSchedulesDuration(updatedClass.getClassSchedulesDuration());
-            classSchedules.setClassSchedulesDate(updatedClass.getClassSchedulesDate());
-            classRepository.save(classSchedules);
-        }
-    }
+//    @Override
+//    public void update(String id, ClassSchedules updatedClass) {
+//        ClassSchedules classSchedules = classRepository.findById(UUID.fromString(id)).orElse(null);
+//
+//        if (classSchedules != null) {
+//            classSchedules.setClassSchedulesTitle(updatedClass.getClassSchedulesTitle());
+//            classSchedules.setClassSchedulesDuration(updatedClass`.getClassSchedulesDuration());
+//            classSchedules.setClassSchedulesDate(updatedClass.getClassSchedulesDate());
+//            classRepository.save(classSchedules);
+//        }
+//    }
 
     @Override
     public List<ClassSchedules> findClassByCustomerId(String customerId) {

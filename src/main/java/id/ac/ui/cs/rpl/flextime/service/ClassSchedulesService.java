@@ -11,6 +11,6 @@ public interface ClassSchedulesService {
     public List<ClassSchedules> findAll();
     public void delete(String id);
     Optional<ClassSchedules> findById(String id);
-    public void update(String id, ClassSchedules classSchedules);
+//    public void update(String id, ClassSchedules classSchedules);
     List<ClassSchedules> findClassByCustomerId(String customerId);
 }
