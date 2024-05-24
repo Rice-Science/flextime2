@@ -1,145 +1,83 @@
 package id.ac.ui.cs.rpl.flextime.service;
 
 import id.ac.ui.cs.rpl.flextime.model.*;
-import id.ac.ui.cs.rpl.flextime.repository.ActivityPlanRepository;
-import id.ac.ui.cs.rpl.flextime.repository.UserRepository;
+import id.ac.ui.cs.rpl.flextime.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ActivityPlanServiceImpl implements ActivityPlanService {
+    @Autowired
+    private ClassSchedulesRepository classSchedulesRepository;
 
     @Autowired
-    private ActivityPlanRepository activityPlanRepository;
+    private FitnessPlanRepository fitnessPlanRepository;
+
     @Autowired
-    private AssignmentSchedulesService assignmentSchedulesService;
+    private TestSchedulesRepository testSchedulesRepository;
+
     @Autowired
-    private ClassSchedulesService classSchedulesService;
+    private SessionScheduleRepository sessionScheduleRepository;
+
     @Autowired
-    private TestSchedulesService testSchedulesService;
+    private SessionPlanRepository sessionPlanRepository;
 
+    @Autowired
+    private CustomerTrainingRepository customerTrainingRepository;
 
-    public ActivityPlan createActivityPlan(User user) {
-        UUID userId = user.getId();
-        List<AssignmentSchedules> assignmentSchedules = assignmentSchedulesService.findAssignmentByCustomerId(userId.toString());
-        List<ClassSchedules> classSchedules = classSchedulesService.findClassByCustomerId(userId.toString());
-        List<TestSchedules> testSchedules = testSchedulesService.findTestByCustomerId(userId.toString());
+    public SessionSchedule checkSessionPlan(User user, SessionSchedule sessionSchedule) throws Exception {
 
-        ActivityPlan  activityPlan = new ActivityPlan();
+        List<ClassSchedules> classSchedules = classSchedulesRepository.findClassByCustomer_Id(user.getId());
+        List<TestSchedules> testSchedules = testSchedulesRepository.findTestByCustomer_Id(user.getId());
+        List<CustomerTraining> customerTrainings = customerTrainingRepository.findCustomerTrainingsBySessionPlan_Id(sessionSchedule.getSessionPlan().getId());
+        int totalSession = 0;
+        int totalDuration = sessionSchedule.getEnd().getSecond() - sessionSchedule.getStart().getSecond();
 
-        activityPlan.setUser(user);
+        for (CustomerTraining customerTraining: customerTrainings){
+            totalSession += customerTraining.getDurationInSeconds();
 
-        for (AssignmentSchedules assignmentSchedule : assignmentSchedules) {
-            activityPlan.setAssignmentSchedules(assignmentSchedule);
         }
 
-        for (ClassSchedules classSchedule : classSchedules){
-            activityPlan.setClassSchedules(classSchedule);
+        if (totalSession > totalDuration){
+            throw new Exception("You have exceeded the total duration of the session");
         }
 
-        for (TestSchedules testSchedule : testSchedules){
-            activityPlan.setTestSchedules(testSchedule);
-        }
-
-        return activityPlan;
-    }
-
-    public void addSession(UUID sessionId, LocalDateTime time, ActivityPlan activityPlan) {
-        Map<LocalDateTime, UUID> sessionSchedules =  activityPlan.getSessionSchedules();
-        sessionSchedules.put(time, sessionId);
-    }
-
-    public ActivityPlan getActivityPlanByUser_Id(UUID userId) {
-        return activityPlanRepository.findActivityPlanByUser_Id(userId);
-    }
-
-    public void removeSession(LocalDateTime time, ActivityPlan activityPlan) {
-        Map<LocalDateTime, UUID> sessionSchedules = activityPlan.getSessionSchedules();
-        sessionSchedules.remove(time);
-    }
-
-    public Date calculateEndTimeSession( Date time, int duration) {
-        // Create a Calendar instance and set it to the given start time
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(time);
-
-        // Add the duration to the calendar (assuming duration is in seconds)
-        calendar.add(Calendar.SECOND, duration);
-
-        return calendar.getTime();
-    }
-
-    public Optional<ActivityPlan> getActivityPlanById(UUID id) {
-        return activityPlanRepository.findById(id);
-    }
-
-    public Map<String, List<Object>> groupActivitiesByDate(User user) {
-        List<AssignmentSchedules> assignmentSchedules = assignmentSchedulesService.findAssignmentByCustomerId(user.getId().toString());
-        List<TestSchedules> testSchedules = testSchedulesService.findTestByCustomerId(user.getId().toString());
-        List<ClassSchedules> classSchedules = classSchedulesService.findClassByCustomerId(user.getId().toString());
-        Map<LocalDateTime, UUID> sessionSchedules = activityPlanRepository.findActivityPlanByUser_Id(user.getId()).getSessionSchedules();
-
-        List<DatedItem> datedItems = new ArrayList<>();
-
-        // Add all assignment schedules to the combined list
-        for (AssignmentSchedules assignment : assignmentSchedules) {
-            datedItems.add(new DatedItem(assignment, assignment.getAssignmentSchedulesDeadline()));
-        }
-
-        // Add all test schedules to the combined list
-        for (TestSchedules test : testSchedules) {
-            datedItems.add(new DatedItem(test, test.getTestSchedulesDate()));
-        }
-
-        // Add all class schedules to the combined list
         for (ClassSchedules classSchedule : classSchedules) {
-            datedItems.add(new DatedItem(classSchedule, classSchedule.getClassSchedulesDate()));
+
+            if (classSchedule.getStartDate().isBefore(sessionSchedule.getStart()) && classSchedule.getEndDate().isAfter(sessionSchedule.getEnd())) {
+                throw new Exception("You have class at that time");
+            }
         }
 
-        // Add all session schedules to the combined list
-        for (Map.Entry<LocalDateTime, UUID> entry : sessionSchedules.entrySet()) {
-            datedItems.add(new DatedItem(entry.getValue(), entry.getKey()));
+        for (TestSchedules testSchedule: testSchedules){
+            if (testSchedule.getStartDate().isBefore(sessionSchedule.getStart()) && testSchedule.getEndDate().isAfter(sessionSchedule.getEnd())) {
+                throw new Exception("You have test at that time");
+            }
         }
 
-        // Sort the list by date
-        datedItems.sort(Comparator.comparing(DatedItem::getDate));
-
-        // Format the dates to group by day
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-        // Group by day
-        Map<String, List<Object>> groupedByDay = datedItems.stream()
-                .collect(Collectors.groupingBy(
-                        item -> sdf.format(item.getDate()),
-                        Collectors.mapping(DatedItem::getItem, Collectors.toList())
-                ));
-
-        return groupedByDay;
+        return sessionSchedule;
+    }
+    public void deleteSessionSchedules(UUID id) {
+        sessionScheduleRepository.deleteById(id);
     }
 
+    public void createSessionSchedules(User user, SessionSchedule sessionSchedule) throws Exception {
+        checkSessionPlan(user, sessionSchedule);
+        sessionScheduleRepository.save(sessionSchedule);
+    }
 
-    //Wrapper class to keep the object and its date
-    public class DatedItem{
-        private Object item;
-        private LocalDateTime date;
+    public List<SessionSchedule> findSessionSchedulesByUser_Id(UUID user_id) {
 
-        private DatedItem(Object item, LocalDateTime date) {
-            this.item = item;
-            this.date = date;
-        }
+        FitnessPlan customerFitnessPlan = fitnessPlanRepository.findFitnessPlanByCustomer_Id(user_id);
+        List<SessionPlan> sessionPlans = sessionPlanRepository.findSessionPlansByFitnessPlan_Id(customerFitnessPlan.getId());
 
-        public Object getItem() {
-            return item;
-        }
+        return sessionScheduleRepository.findSessionSchedulesBySessionPlanIn(sessionPlans);
 
-        public LocalDateTime getDate() {
-            return date;
-        }
     }
 
 
