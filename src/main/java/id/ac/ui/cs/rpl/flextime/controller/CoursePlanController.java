@@ -17,8 +17,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/course-plan")
@@ -88,12 +86,10 @@ public class CoursePlanController {
 
     @PostMapping("/create-class")
     public String createClassPost(@ModelAttribute ClassSchedules classSchedules) {
-        // Convert String date and time fields to LocalDate and LocalTime
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // Convert String time fields to localTime
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         try {
-            classSchedules.setClassSchedulesDate(LocalDate.parse(classSchedules.getClassSchedulesDateString(), dateFormatter));
             classSchedules.setClassSchedulesStart(LocalTime.parse(classSchedules.getClassSchedulesStartString(), timeFormatter));
             classSchedules.setClassSchedulesEnd(LocalTime.parse(classSchedules.getClassSchedulesEndString(), timeFormatter));
         } catch (DateTimeParseException e) {
@@ -107,7 +103,9 @@ public class CoursePlanController {
                         .getAuthentication()
                         .getName())
         );
+
         classService.create(classSchedules);
+
         return "redirect:/course-plan";
     }
 
@@ -139,7 +137,13 @@ public class CoursePlanController {
                         .getAuthentication()
                         .getName())
         );
-        testService.create(testSchedules);
+
+        try {
+            testService.create(testSchedules);
+        } catch (Exception e) {
+            return "redirect:/course-plan/create-test?error=overlap_time";
+        }
+
         return "redirect:/course-plan";
     }
 
@@ -185,7 +189,6 @@ public class CoursePlanController {
     public String editClassPage(@PathVariable String id, Model model) {
         ClassSchedules classSchedules = classService.findById(id).orElseThrow(null);
 
-        classSchedules.setClassSchedulesDateString(classSchedules.getClassSchedulesDate().toString());
         classSchedules.setClassSchedulesStartString(classSchedules.getClassSchedulesStart().toString());
         classSchedules.setClassSchedulesEndString(classSchedules.getClassSchedulesEnd().toString());
 
@@ -203,7 +206,6 @@ public class CoursePlanController {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         try {
-            updatedClass.setClassSchedulesDate(LocalDate.parse(updatedClass.getClassSchedulesDateString(), dateFormatter));
             updatedClass.setClassSchedulesStart(LocalTime.parse(updatedClass.getClassSchedulesStartString(), timeFormatter));
             updatedClass.setClassSchedulesEnd(LocalTime.parse(updatedClass.getClassSchedulesEndString(), timeFormatter));
         } catch (DateTimeParseException e) {

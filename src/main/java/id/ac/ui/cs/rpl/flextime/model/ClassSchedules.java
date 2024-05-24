@@ -34,7 +34,7 @@ public class ClassSchedules {
     private String classSchedulesEndString;
 
     @Column(name = "class_date")
-    private LocalDate classSchedulesDate;
+    private String classSchedulesDay;
 
     @Column(name = "class_start")
     private LocalTime classSchedulesStart;
@@ -46,10 +46,10 @@ public class ClassSchedules {
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
-    public String getFormattedDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy");
-        return classSchedulesDate.format(formatter);
-    }
+//    public String getFormattedDate() {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy");
+//        return classSchedulesDate.format(formatter);
+//    }
 
     public String getFormattedStart() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -61,11 +61,11 @@ public class ClassSchedules {
         return classSchedulesEnd.format(formatter);
     }
 
-    public LocalDateTime getStartDate() {
-        return LocalDateTime.of(this.classSchedulesDate,this.classSchedulesStart);
-    }
-
-    public LocalDateTime getEndDate() {
-        return LocalDateTime.of(this.classSchedulesDate,this.classSchedulesEnd);
-    }
+//    public LocalDateTime getStartDate() {
+//        return LocalDateTime.of(this.classSchedulesDate,this.classSchedulesStart);
+//    }
+//
+//    public LocalDateTime getEndDate() {
+//        return LocalDateTime.of(this.classSchedulesDate,this.classSchedulesEnd);
+//    }
 }
