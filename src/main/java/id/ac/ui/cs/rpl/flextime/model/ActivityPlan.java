@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class ActivityPlan {
     private TestSchedules testSchedules;
 
     @ElementCollection
-    private Map<Date, UUID> sessionSchedules;
+    private Map<LocalDateTime, UUID> sessionSchedules;
 
     public ActivityPlan() {
         this.sessionSchedules = new HashMap<>();
