@@ -81,7 +81,7 @@
                 <div th:each="classSchedule : ${class}" class="bg-card-bg p-6 rounded-lg shadow-lg transition ease-in-out hover:scale-105 hover:-translate-y-1 duration-150">
                     <p class="text-lg">Class</p>
                     <h2 class="text-2xl font-bold mb-2" th:text="${classSchedule.classSchedulesTitle}">Class Title</h2>
-                    <p class="text-lg" th:text="${classSchedule.formattedDate}">Date</p>
+                    <p class="text-lg" th:text="${classSchedule.classSchedulesDay}">Day</p>
                     <p class="text-lg" th:text="${classSchedule.formattedStart}">Start Time</p>
                     <p class="text-lg" th:text="${classSchedule.formattedEnd}">End Time</p>
                     <a th:href="@{/course-plan/edit-class/{id}(id=${classSchedule.classSchedulesId})}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
