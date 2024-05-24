@@ -12,7 +12,7 @@ public interface TestSchedulesService {
     public List<TestSchedules> findAll();
     public void delete(String id);
     Optional<TestSchedules> findById(String id);
-    public TestSchedules update(TestSchedules testSchedules);
+    public TestSchedules update(TestSchedules testSchedules) throws Exception;
     List<TestSchedules> findTestByCustomerId(String customerId);
     public boolean checkOverlap(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2);
 }

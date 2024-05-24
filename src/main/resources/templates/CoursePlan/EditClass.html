@@ -27,8 +27,18 @@
                 <input th:field="*{classSchedulesEndString}" type="time" id="endInput" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
             </div>
             <div class="form-group mb-4 col-4">
-                <label for="dateInput" class="block py-2 px-3 text-white rounded">Date</label>
-                <input th:field="*{classSchedulesDateString}" type="date" id="dateInput" placeholder="Enter class date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <label for="dayInput" class="block py-2 px-3 text-white rounded">Day</label>
+                <select th:field="*{classSchedulesDay}" id="dayInput"
+                        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-600 bg-gray-700 rounded-md text-white">
+                    <option value="" class="text-gray-400">Select Day</option>
+                    <option th:value="Monday" name="Monday">Monday</option>
+                    <option th:value="Tuesday" name="Tuesday">Tuesday</option>
+                    <option th:value="Wednesday" name="Wednesday">Wednesday</option>
+                    <option th:value="Thursday" name="Thursday">Thursday</option>
+                    <option th:value="Friday" name="Friday">Friday</option>
+                    <option th:value="Saturday" name="Saturday">Saturday</option>
+                    <option th:value="Sunday" name="Sunday">Sunday</option>
+                </select>
             </div>
             <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
         </form>
