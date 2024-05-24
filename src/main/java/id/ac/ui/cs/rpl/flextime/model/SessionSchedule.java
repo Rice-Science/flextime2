@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
@@ -19,8 +20,11 @@ public class SessionSchedule {
     private SessionPlan sessionPlan;
 
     @Column
-    private LocalDateTime start;
+    private String day;
 
     @Column
-    private LocalDateTime end;
+    private LocalTime startTime;
+
+    @Column
+    private LocalTime endTime;
 }
