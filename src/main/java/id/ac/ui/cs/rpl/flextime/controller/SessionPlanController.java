@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
 import java.util.List;
 
 @RequestMapping("/session-plan")
@@ -19,6 +20,8 @@ public class SessionPlanController {
     private SessionPlanService sessionPlanService;
     @Autowired
     private FitnessPlanService fitnessPlanService;
+    @Autowired
+    private CustomerTrainingService customerTrainingService;
 
     @GetMapping("")
     public String index(Model model) {
@@ -27,13 +30,21 @@ public class SessionPlanController {
                 .getAuthentication()
                 .getName());
         FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(user.getId().toString());
-        List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByFitnessPlan(fitnessPlan.getId().toString());
-        if (sessionPlans.isEmpty()) {
-            return "session-plan/indexNoSession";
+        List<SessionPlan> sessionPlanList = sessionPlanService.getAllSessionPlansByFitnessPlan(fitnessPlan.getId().toString());
+
+        if (!sessionPlanList.isEmpty()) {
+            for (SessionPlan sessionPlan : sessionPlanList) {
+                boolean isNoTraining = customerTrainingService.getCustomerTrainingsBySessionPlanId(sessionPlan.getId().toString()).isEmpty();
+                if (isNoTraining) {
+                    sessionPlanService.deleteSessionPlanById(sessionPlan.getId().toString());
+                }
+            }
+            List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByFitnessPlan(fitnessPlan.getId().toString());
+            model.addAttribute("sessionPlans", sessionPlans);
+            model.addAttribute("service", sessionPlanService);
+            return "session-plan/index";
         }
-        model.addAttribute("sessionPlans", sessionPlans);
-        model.addAttribute("service", sessionPlanService);
-        return "session-plan/index";
+        return "session-plan/indexNoSession";
     }
 
     @GetMapping("/pick-training-type")

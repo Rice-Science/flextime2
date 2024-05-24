@@ -35,15 +35,8 @@ public class TestSchedulesServiceImpl implements TestSchedulesService{
     }
 
     @Override
-    public void update(String id, TestSchedules updatedClass) {
-        TestSchedules classSchedules = testRepository.findById(UUID.fromString(id)).orElse(null);
-
-        if (classSchedules != null) {
-            classSchedules.setTestSchedulesTitle(updatedClass.getTestSchedulesTitle());
-            classSchedules.setTestSchedulesDuration(updatedClass.getTestSchedulesDuration());
-            classSchedules.setTestSchedulesDate(updatedClass.getTestSchedulesDate());
-            testRepository.save(classSchedules);
-        }
+    public TestSchedules update(TestSchedules updatedTest) {
+        return testRepository.save(updatedTest);
     }
 
     @Override
