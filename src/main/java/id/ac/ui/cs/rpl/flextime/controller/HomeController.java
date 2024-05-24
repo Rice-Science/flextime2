@@ -44,6 +44,10 @@ public class HomeController {
     @GetMapping("")
     public String home(Model model) {
         FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getId().toString());
+        if (fitnessPlan == null) {
+            return "redirect:/fitness-plan";
+        }
+
         List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByFitnessPlan(fitnessPlan.getId().toString());
 
         User user = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -51,7 +55,7 @@ public class HomeController {
         List<ClassSchedules> classSchedules = classService.findClassByCustomerId(user.getId().toString());
         List<AssignmentSchedules> assignmentSchedules = assignmentService.findAssignmentByCustomerId(user.getId().toString());
 
-        if ( (testSchedules.isEmpty() && classSchedules.isEmpty() && assignmentSchedules.isEmpty()) || sessionPlans.isEmpty()) {
+        if ( (testSchedules.isEmpty() && classSchedules.isEmpty() && assignmentSchedules.isEmpty() ) || sessionPlans.isEmpty()) {
             return "homePage/noActivityPlan";
         }
 
@@ -86,13 +90,15 @@ public class HomeController {
             assignmentSchedulesHashMap.put(day.getValue(), assignmentSchedulesAdd);
 
             List<SessionSchedule> sessionSchedulesList = activityPlanService.findSessionSchedulesByDayAndByUser_Id(user.getId(), day.getValue());
+            sessionSchedulesList = sessionSchedulesList.stream().sorted(Comparator.comparing(SessionSchedule::getStartTime)).collect(Collectors.toList());
             sessionSchedulesHashMap.put(day.getValue(), sessionSchedulesList);
         }
 
-        model.addAttribute("classSchedules", classSchedulesHashMap);
+        model.addAttribute("classSchedulesMap", classSchedulesHashMap);
         model.addAttribute("testSchedules", testSchedulesHashMap);
         model.addAttribute("assignmentSchedules", assignmentSchedulesHashMap);
         model.addAttribute("sessionSchedules", sessionSchedulesHashMap);
+        model.addAttribute("days", Day.values());
 
         return "home";
     }
