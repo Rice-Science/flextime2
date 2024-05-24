@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Add Assignment</title>
+    <link rel="stylesheet" href="/output.css">
 </head>
-<body>
+<body class="bg-tokyo-night-bg text-white">
+
+<div th:include="navbar::navbar" class="shadow-2xl">
+</div>
+
+<div class="flex flex-col justify-between items-center container mx-auto mb-8 mt-24">
+    <div class="flex flex-col items-center justify-center h-screen">
+        <form th:action="@{/course-plan/create-assignments}" th:object="${assignment}" method="post">
+            <div class="form-group mb-4 col-4">
+                <label for="nameInput" class="block py-2 px-3 text-white rounded" >Name</label>
+                <input th:field="*{assignmentSchedulesTitle}" type="text" id="nameInput" placeholder="Enter assignment name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            </div>
+            <div class="form-group mb-4 col-4">
+                <label for="deadlineInput" class="block py-2 px-3 text-white rounded">Deadline</label>
+                <input th:field="*{assignmentSchedulesDeadline}" type="datetime-local" id="deadlineInput" placeholder="Enter deadline date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            </div>
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

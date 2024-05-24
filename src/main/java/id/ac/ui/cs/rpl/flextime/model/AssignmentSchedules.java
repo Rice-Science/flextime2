@@ -4,7 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Entity
@@ -14,15 +15,20 @@ public class AssignmentSchedules {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID AssignmentSchedulesId;
+    private UUID assignmentSchedulesId;
 
     @Column(name = "assignment_name")
-    private String AssignmentSchedulesTitle;
+    private String assignmentSchedulesTitle;
 
     @Column(name = "assignment_deadline")
-    private Date AssignmentSchedulesDeadline; // datatype prop should be changed to something IDK
+    private LocalDateTime assignmentSchedulesDeadline;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
+
+    public String getFormattedDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy HH:mm");
+        return assignmentSchedulesDeadline.format(formatter);
+    }
 }

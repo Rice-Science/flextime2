@@ -3,10 +3,12 @@ package id.ac.ui.cs.rpl.flextime.model;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
-import java.util.Date;
-import java.time.Duration;
 
 @Entity
 @Getter @Setter
@@ -21,13 +23,40 @@ public class ClassSchedules {
     @Column(name = "class_name")
     private String classSchedulesTitle;
 
-    @Column(name = "class_duration")
-    private Duration classSchedulesDuration;
+    @Transient
+    private String classSchedulesDateString;
+
+    @Transient
+    private String classSchedulesStartString;
+
+    @Transient
+    private String classSchedulesEndString;
 
     @Column(name = "class_date")
-    private Date classSchedulesDate;
+    private LocalDate classSchedulesDate;
+
+    @Column(name = "class_start")
+    private LocalTime classSchedulesStart;
+
+    @Column(name = "class_end")
+    private LocalTime classSchedulesEnd;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
+
+    public String getFormattedDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy");
+        return classSchedulesDate.format(formatter);
+    }
+
+    public String getFormattedStart() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return classSchedulesStart.format(formatter);
+    }
+
+    public String getFormattedEnd() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return classSchedulesEnd.format(formatter);
+    }
 }

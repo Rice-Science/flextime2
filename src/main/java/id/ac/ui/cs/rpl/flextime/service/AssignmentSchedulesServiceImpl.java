@@ -34,14 +34,8 @@ public class AssignmentSchedulesServiceImpl implements AssignmentSchedulesServic
     }
 
     @Override
-    public void update(String id, AssignmentSchedules updatedAssignment) {
-        AssignmentSchedules assignment = assignmentRepository.findById(UUID.fromString(id)).orElse(null);
-
-        if (assignment != null) {
-            assignment.setAssignmentSchedulesTitle(updatedAssignment.getAssignmentSchedulesTitle());
-            assignment.setAssignmentSchedulesDeadline(updatedAssignment.getAssignmentSchedulesDeadline());
-            assignmentRepository.save(assignment);
-        }
+    public AssignmentSchedules update(AssignmentSchedules updatedAssignment) {
+        return assignmentRepository.save(updatedAssignment);
     }
 
     @Override
