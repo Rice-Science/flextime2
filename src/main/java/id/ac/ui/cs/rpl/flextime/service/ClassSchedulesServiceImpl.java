@@ -1,12 +1,14 @@
 package id.ac.ui.cs.rpl.flextime.service;
 
 import id.ac.ui.cs.rpl.flextime.model.ClassSchedules;
+import id.ac.ui.cs.rpl.flextime.model.TestSchedules;
 import id.ac.ui.cs.rpl.flextime.repository.ClassSchedulesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -19,12 +21,36 @@ public class ClassSchedulesServiceImpl implements ClassSchedulesService{
     private UserService userService;
 
     @Override
-    public void create(ClassSchedules classSchedules){
+    public void create(ClassSchedules classSchedules) throws Exception{
+        LocalTime testStart = classSchedules.getClassSchedulesStart();
+        LocalTime testEnd = classSchedules.getClassSchedulesEnd();
+
+        List<ClassSchedules> allSchedules = findClassByCustomerId(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName()).getId().toString()
+        );
+
+        if (testStart.isAfter(testEnd)) {
+            throw new Exception("Overlap with between start and end times!");
+        }
+
+        for (ClassSchedules existingSchedule : allSchedules) {
+            if (Objects.equals(existingSchedule.getClassSchedulesDay(), classSchedules.getClassSchedulesDay())){
+                LocalTime existingStart = existingSchedule.getClassSchedulesStart();
+                LocalTime existingEnd = existingSchedule.getClassSchedulesEnd();
+                if (checkOverlap(testStart, testEnd, existingStart, existingEnd)) {
+                    throw new Exception("Overlap with existing test schedule detected!");
+                }
+            }
+        }
+
         classRepository.save(classSchedules);
     }
 
     @Override
-    public boolean checkOverlap(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2){
+    public boolean checkOverlap(LocalTime start1, LocalTime end1, LocalTime start2, LocalTime end2){
         return start1.isBefore(end2) && end1.isAfter(start2);
     }
 
@@ -44,7 +70,31 @@ public class ClassSchedulesServiceImpl implements ClassSchedulesService{
     }
 
     @Override
-    public ClassSchedules update(ClassSchedules updatedClass) {
+    public ClassSchedules update(ClassSchedules updatedClass) throws Exception{
+        LocalTime testStart = updatedClass.getClassSchedulesStart();
+        LocalTime testEnd = updatedClass.getClassSchedulesEnd();
+
+        List<ClassSchedules> allSchedules = findClassByCustomerId(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName()).getId().toString()
+        );
+
+        if (testStart.isAfter(testEnd)) {
+            throw new Exception("Overlap with between start and end times!");
+        }
+
+        for (ClassSchedules existingSchedule : allSchedules) {
+            if (Objects.equals(existingSchedule.getClassSchedulesDay(), updatedClass.getClassSchedulesDay())){
+                LocalTime existingStart = existingSchedule.getClassSchedulesStart();
+                LocalTime existingEnd = existingSchedule.getClassSchedulesEnd();
+                if (checkOverlap(testStart, testEnd, existingStart, existingEnd)) {
+                    throw new Exception("Overlap with existing test schedule detected!");
+                }
+            }
+        }
+
         return classRepository.save(updatedClass);
     }
 

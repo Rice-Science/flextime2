@@ -68,7 +68,31 @@ public class TestSchedulesServiceImpl implements TestSchedulesService{
     }
 
     @Override
-    public TestSchedules update(TestSchedules updatedTest) {
+    public TestSchedules update(TestSchedules updatedTest) throws Exception{
+        LocalDateTime testStart = updatedTest.getTestSchedulesDate().atTime(updatedTest.getTestSchedulesStart());
+        LocalDateTime testEnd = updatedTest.getTestSchedulesDate().atTime(updatedTest.getTestSchedulesEnd());
+
+        List<TestSchedules> allSchedules = findTestByCustomerId(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName()).getId().toString()
+        );
+
+        // if start conflict with end
+        if (testStart.isAfter(testEnd)) {
+            throw new Exception("Overlap with between start and end times!");
+        }
+
+        // if conflict with other schedule
+        for (TestSchedules existingSchedule : allSchedules) {
+            LocalDateTime existingStart = existingSchedule.getTestSchedulesDate().atTime(existingSchedule.getTestSchedulesStart());
+            LocalDateTime existingEnd = existingSchedule.getTestSchedulesDate().atTime(existingSchedule.getTestSchedulesEnd());
+            if (checkOverlap(testStart, testEnd, existingStart, existingEnd)) {
+                throw new Exception("Overlap with existing test schedule detected!");
+            }
+        }
+
         return testRepository.save(updatedTest);
     }
 
