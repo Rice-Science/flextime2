@@ -59,4 +59,9 @@ public class SessionPlanServiceImpl implements SessionPlanService{
         }
         return totalTime;
     }
+
+    @Override
+    public List<SessionPlan> getAllSessionPlansByUsername(String username) {
+        return sessionPlanRepository.findSessionPlansByFitnessPlan_Customer_Username(username);
+    }
 }

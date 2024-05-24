@@ -15,4 +15,5 @@ public interface ClassSchedulesService {
     public ClassSchedules update(ClassSchedules classSchedules) throws Exception;
     List<ClassSchedules> findClassByCustomerId(String customerId);
     public boolean checkOverlap(LocalTime start1, LocalTime end1, LocalTime start2, LocalTime end2);
+    public List<ClassSchedules> findClassByDay(String day);
 }

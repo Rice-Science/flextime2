@@ -9,5 +9,6 @@ import java.util.UUID;
 
 public interface SessionScheduleRepository extends JpaRepository<SessionSchedule, UUID>{
     SessionSchedule findSessionScheduleBySessionPlan_Id(UUID id);
-    List<SessionSchedule> findSessionSchedulesBySessionPlanIn(List<SessionPlan> sessionPlans);
+    List<SessionSchedule> findSessionSchedulesByDayAndSessionPlanIn(String day, List<SessionPlan> sessionPlans);
+
 }

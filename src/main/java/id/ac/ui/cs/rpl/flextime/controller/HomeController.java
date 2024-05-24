@@ -1,5 +1,7 @@
 package id.ac.ui.cs.rpl.flextime.controller;
 
+import enums.Day;
+import id.ac.ui.cs.rpl.flextime.dto.SessionScheduleDto;
 import id.ac.ui.cs.rpl.flextime.model.*;
 import id.ac.ui.cs.rpl.flextime.service.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,11 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.*;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -20,71 +21,117 @@ import java.util.stream.Collectors;
 public class HomeController {
 
     @Autowired
+    private ActivityPlanService activityPlanService;
+
+    @Autowired
+    private AssignmentSchedulesService assignmentService;
+
+    @Autowired
+    private ClassSchedulesService classService;
+
+    @Autowired
+    private TestSchedulesService testService;
+
+    @Autowired
+    private SessionPlanService sessionPlanService;
+
+    @Autowired
     private UserService userService;
 
-//    @Autowired
-//    private ActivityPlanService activityPlanService;
+    @Autowired
+    private FitnessPlanService fitnessPlanService;
 
     @GetMapping("")
-    public String home() {
+    public String home(Model model) {
+        FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getId().toString());
+        List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByFitnessPlan(fitnessPlan.getId().toString());
+
+        User user = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<TestSchedules> testSchedules = testService.findTestByCustomerId(user.getId().toString());
+        List<ClassSchedules> classSchedules = classService.findClassByCustomerId(user.getId().toString());
+        List<AssignmentSchedules> assignmentSchedules = assignmentService.findAssignmentByCustomerId(user.getId().toString());
+
+        if ( (testSchedules.isEmpty() && classSchedules.isEmpty() && assignmentSchedules.isEmpty()) || sessionPlans.isEmpty()) {
+            return "homePage/noActivityPlan";
+        }
+
+        Map<String, List<ClassSchedules>> classSchedulesHashMap = new HashMap<>();
+        Map<String, List<TestSchedules>> testSchedulesHashMap = new HashMap<>();
+        Map<String, List<AssignmentSchedules>> assignmentSchedulesHashMap = new HashMap<>();
+        Map<String, List<SessionSchedule>> sessionSchedulesHashMap = new HashMap<>();
+
+        for (Day day : Day.values() ) {
+            List<ClassSchedules> classSchedulesByDay = classService.findClassByDay(day.getValue());
+            classSchedulesByDay = classSchedulesByDay.stream().sorted(Comparator.comparing(ClassSchedules::getClassSchedulesStart)).collect(Collectors.toList());
+
+            classSchedulesHashMap.put(day.getValue(), classSchedulesByDay);
+
+            List<TestSchedules> testSchedulesAdd = new ArrayList<>();
+            for (TestSchedules test : testSchedules) {
+                if (test.getDay().equals(day.getValue())) {
+                    testSchedulesAdd.add(test);
+                }
+            }
+            testSchedulesAdd = testSchedulesAdd.stream().sorted(Comparator.comparing(TestSchedules::getTestSchedulesStart)).collect(Collectors.toList());
+            testSchedulesHashMap.put(day.getValue(), testSchedulesAdd);
+
+            List<AssignmentSchedules> assignmentSchedulesList = assignmentService.findAssignmentByCustomerId(user.getId().toString());
+            List<AssignmentSchedules> assignmentSchedulesAdd = new ArrayList<>();
+            for (AssignmentSchedules assignment : assignmentSchedulesList) {
+                if (assignment.getDay().equals(day.getValue())) {
+                    assignmentSchedulesAdd.add(assignment);
+                }
+            }
+            assignmentSchedulesAdd = assignmentSchedulesAdd.stream().sorted(Comparator.comparing(AssignmentSchedules::getAssignmentSchedulesDeadline)).collect(Collectors.toList());
+            assignmentSchedulesHashMap.put(day.getValue(), assignmentSchedulesAdd);
+
+            List<SessionSchedule> sessionSchedulesList = activityPlanService.findSessionSchedulesByDayAndByUser_Id(user.getId(), day.getValue());
+            sessionSchedulesHashMap.put(day.getValue(), sessionSchedulesList);
+        }
+
+        model.addAttribute("classSchedules", classSchedulesHashMap);
+        model.addAttribute("testSchedules", testSchedulesHashMap);
+        model.addAttribute("assignmentSchedules", assignmentSchedulesHashMap);
+        model.addAttribute("sessionSchedules", sessionSchedulesHashMap);
+
         return "home";
     }
 
-//    @GetMapping("/")
-//    public String getActivityPlan(Model model){
-//        User user = userService.findByUsername(SecurityContextHolder
-//                .getContext()
-//                .getAuthentication()
-//                .getName());
-//
-//        if (user == null) {
-//            return "redirect:/login";
-//        }
-//        if (activityPlanService.getActivityPlanByUser_Id(user.getId()) == null) {
-//            return "homePage/noActivityPlan";
-//        }
-//
-//        ActivityPlan activityPlan = activityPlanService.createActivityPlan(user);
-//        Map<String, List<Object>> activities = activityPlanService.groupActivitiesByDate(user);
-//
-//
-//        model.addAttribute("activityPlan", activityPlan);
-//        model.addAttribute("groupedActivities", activities);
-//        return "home";
-//
-//    }
-//
-//    @PostMapping("/add-session")
-//    public String addSessionPlanPost(@ModelAttribute SessionPlan sessionPlan, @ModelAttribute Date sessionSchedules) {
-//        UUID userId = userService.findByUsername(SecurityContextHolder
-//                .getContext()
-//                .getAuthentication()
-//                .getName()).getId();
-//        activityPlanService.addSession(sessionPlan.getId(), sessionSchedules, activityPlanService.getActivityPlanByUser_Id(userId));
-//
-//        return "homePage/addSession";
-//    }
-//
-//    @GetMapping("/add-session")
-//    public String addSessionPlanPage(Model model){
-//        SessionPlan sessionPlan = new SessionPlan();
-//        Date date = new Date();
-//
-//        return "homePage/addSession";
-//    }
-//
-//    @PostMapping("/delete-session/{sessionSchedules}")
-//    public String deleteSessionPlanPost(@PathVariable  Date sessionSchedules) {
-//        UUID userId = userService.findByUsername(SecurityContextHolder
-//                .getContext()
-//                .getAuthentication()
-//                .getName()).getId();
-//
-//        activityPlanService.removeSession(sessionSchedules, activityPlanService.getActivityPlanByUser_Id(userId));
-//
-//
-//        return "redirect:/";
-//    }
+    @GetMapping("/add-session-schedule")
+    public String addSessionSchedule(Model model) {
+        List<SessionPlan> availableSessionPlans = sessionPlanService.getAllSessionPlansByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        model.addAttribute("availableSessionPlans", availableSessionPlans);
+        return "homePage/addSession";
+    }
+
+    @GetMapping("/add-session-schedule/{sessionId}")
+    public String addSessionToSchedule(@PathVariable String sessionId, Model model) {
+        SessionScheduleDto sessionScheduleDto = new SessionScheduleDto();
+        model.addAttribute("sessionId", sessionId);
+        model.addAttribute("sessionScheduleDto", sessionScheduleDto);
+        return "homePage/addSession";
+    }
+
+    @PostMapping("/add-session-schedule/{sessionId}")
+    public String addSessionToSchedulePost(@PathVariable String sessionId, @ModelAttribute("sessionScheduleDto") SessionScheduleDto sessionScheduleDto) {
+        LocalTime startTime = LocalTime.parse(sessionScheduleDto.getStartTime());
+        LocalTime endTime = LocalTime.parse(sessionScheduleDto.getEndTime());
+        SessionPlan sessionPlan = sessionPlanService.getSessionPlanById(sessionId).orElseThrow();
+        SessionSchedule sessionSchedule = new SessionSchedule();
+        sessionSchedule.setDay(sessionScheduleDto.getDay());
+        sessionSchedule.setStartTime(startTime);
+        sessionSchedule.setEndTime(endTime);
+        sessionSchedule.setSessionPlan(sessionPlan);
+
+        try {
+            User user = userService.findByUsername((SecurityContextHolder.getContext().getAuthentication().getName()));
+            activityPlanService.createSessionSchedules(user, sessionSchedule);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/";
+    }
 }
 
 

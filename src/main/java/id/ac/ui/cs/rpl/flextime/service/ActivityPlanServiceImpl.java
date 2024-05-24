@@ -34,7 +34,6 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
     public SessionSchedule checkSessionPlan(User user, SessionSchedule sessionSchedule) throws Exception {
         List<ClassSchedules> classSchedules = classSchedulesRepository.findClassByCustomer_Id(user.getId());
-        List<TestSchedules> testSchedules = testSchedulesRepository.findTestByCustomer_Id(user.getId());
         List<CustomerTraining> customerTrainings = customerTrainingRepository.findCustomerTrainingsBySessionPlan_Id(sessionSchedule.getSessionPlan().getId());
         int totalSession = 0;
         int totalDuration = sessionSchedule.getEndTime().getSecond() - sessionSchedule.getStartTime().getSecond();
@@ -67,12 +66,12 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
         sessionScheduleRepository.save(sessionSchedule);
     }
 
-    public List<SessionSchedule> findSessionSchedulesByUser_Id(UUID user_id) {
+    public List<SessionSchedule> findSessionSchedulesByDayAndByUser_Id(UUID user_id, String day) {
 
         FitnessPlan customerFitnessPlan = fitnessPlanRepository.findFitnessPlanByCustomer_Id(user_id);
         List<SessionPlan> sessionPlans = sessionPlanRepository.findSessionPlansByFitnessPlan_Id(customerFitnessPlan.getId());
 
-        return sessionScheduleRepository.findSessionSchedulesBySessionPlanIn(sessionPlans);
+        return sessionScheduleRepository.findSessionSchedulesByDayAndSessionPlanIn(day, sessionPlans);
 
     }
 

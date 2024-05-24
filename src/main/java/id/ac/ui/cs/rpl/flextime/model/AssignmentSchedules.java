@@ -31,4 +31,9 @@ public class AssignmentSchedules {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d yyyy HH:mm");
         return assignmentSchedulesDeadline.format(formatter);
     }
+
+    public String getDay() {
+        String allCaps = this.assignmentSchedulesDeadline.getDayOfWeek().toString();
+        return allCaps.charAt(0) + allCaps.substring(1).toLowerCase();
+    }
 }

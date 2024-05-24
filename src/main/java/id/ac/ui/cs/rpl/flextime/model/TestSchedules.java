@@ -69,4 +69,9 @@ public class TestSchedules {
     public LocalDateTime getEndDate() {
         return LocalDateTime.of(this.testSchedulesDate,this.testSchedulesEnd);
     }
+
+    public String getDay() {
+        String allCaps = this.testSchedulesDate.getDayOfWeek().toString();
+        return allCaps.charAt(0) + allCaps.substring(1).toLowerCase();
+    }
 }
