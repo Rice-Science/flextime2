@@ -4,6 +4,35 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/output.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Assuming 'groupedSchedules' is passed as a JSON string by the Thymeleaf template
+            const groupedSchedules = /*[[${groupedSchedules}]]*/ {};
+            const calendarDiv = document.getElementById('calendar');
+
+            for (const [date, events] of Object.entries(groupedSchedules)) {
+                const dateDiv = document.createElement('div');
+                dateDiv.innerHTML = `<h3>${date}</h3>`;
+
+                events.forEach(event => {
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = 'event';
+                    if (event.assignmentSchedulesDeadline) {
+                        eventDiv.innerText = `Assignment due at ${new Date(event.assignmentSchedulesDeadline).toLocaleTimeString()}`;
+                    } else if (event.testSchedulesDate) {
+                        eventDiv.innerText = `Test at ${new Date(event.testSchedulesDate).toLocaleTimeString()}`;
+                    } else if (event.classSchedulesDate) {
+                        eventDiv.innerText = `Class at ${new Date(event.classSchedulesDate).toLocaleTimeString()}`;
+                    } else if (event.date) { // for session schedules
+                        eventDiv.innerText = `Session at ${new Date(event.date).toLocaleTimeString()}`;
+                    }
+                    dateDiv.appendChild(eventDiv);
+                });
+
+                calendarDiv.appendChild(dateDiv);
+            }
+        });
+    </script>
 </head>
 
 <body class="bg-tokyo-night-bg">
