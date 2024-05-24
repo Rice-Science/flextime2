@@ -104,7 +104,11 @@ public class CoursePlanController {
                         .getName())
         );
 
-        classService.create(classSchedules);
+        try {
+            classService.create(classSchedules);
+        } catch (Exception e) {
+            return "redirect:/course-plan/create-class?error=overlap_time";
+        }
 
         return "redirect:/course-plan";
     }
@@ -202,7 +206,6 @@ public class CoursePlanController {
         ClassSchedules classSchedules = classService.findById(id).orElseThrow(null);
 
         // Convert String date and time fields to LocalDate and LocalTime
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         try {
@@ -218,7 +221,13 @@ public class CoursePlanController {
                 .getAuthentication()
                 .getName()));
         updatedClass.setClassSchedulesId(classSchedules.getClassSchedulesId());
-        classService.update(updatedClass);
+
+        try {
+            classService.update(updatedClass);
+        } catch (Exception e) {
+            return "redirect:/course-plan/update-class/" + id + "?error=overlap_time";
+        }
+
         return "redirect:/course-plan";
     }
 
@@ -259,7 +268,13 @@ public class CoursePlanController {
                         .getName())
         );
         updatedTest.setTestSchedulesId(testSchedules.getTestSchedulesId());
-        testService.update(updatedTest);
+
+        try {
+            testService.update(updatedTest);
+        } catch (Exception e) {
+            return "redirect:/course-plan/update-class/" + id + "?error=overlap_time";
+        }
+
         return "redirect:/course-plan";
     }
 }
