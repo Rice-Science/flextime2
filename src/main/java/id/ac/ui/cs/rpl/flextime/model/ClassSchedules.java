@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -58,5 +59,13 @@ public class ClassSchedules {
     public String getFormattedEnd() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         return classSchedulesEnd.format(formatter);
+    }
+
+    public LocalDateTime getStartDate() {
+        return LocalDateTime.of(this.classSchedulesDate,this.classSchedulesStart);
+    }
+
+    public LocalDateTime getEndDate() {
+        return LocalDateTime.of(this.classSchedulesDate,this.classSchedulesEnd);
     }
 }
