@@ -66,14 +66,12 @@
 </div>
 
 <script>
-    // Get elements
     const deleteButtons = document.querySelectorAll('.deleteButton');
     const deleteModal = document.getElementById('deleteModal');
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     let deleteForm = null;
 
-    // Show modal on delete button click
     deleteButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             const sessionPlanId = e.target.getAttribute('data-id');
@@ -82,12 +80,10 @@
         });
     });
 
-    // Hide modal on cancel button click
     cancelButton.addEventListener('click', () => {
         deleteModal.classList.add('hidden');
     });
 
-    // Submit form on confirm button click
     confirmButton.addEventListener('click', () => {
         if (deleteForm) {
             deleteForm.submit();
