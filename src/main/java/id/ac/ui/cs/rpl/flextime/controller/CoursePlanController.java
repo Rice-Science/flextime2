@@ -115,12 +115,24 @@ public class CoursePlanController {
     @GetMapping("/create-test")
     public String createTestPage(Model model){
         TestSchedules test = new TestSchedules();
-        model.addAttribute("test", test);
+        model.addAttribute("testSchedules", test);
         return "CoursePlan/CreateTest";
     }
 
     @PostMapping("/create-test")
     public String createTestPost(@ModelAttribute TestSchedules testSchedules) {
+        // Convert String date and time fields to LocalDate and LocalTime
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        try {
+            testSchedules.setTestSchedulesDate(LocalDate.parse(testSchedules.getTestSchedulesDateString(), dateFormatter));
+            testSchedules.setTestSchedulesStart(LocalTime.parse(testSchedules.getTestSchedulesStartString(), timeFormatter));
+            testSchedules.setTestSchedulesEnd(LocalTime.parse(testSchedules.getTestSchedulesEndString(), timeFormatter));
+        } catch (DateTimeParseException e) {
+            // Handle parsing errors
+            return "redirect:/course-plan/create-test?error=invalid_date_time_format";
+        }
         testSchedules.setCustomer(
                 userService.findByUsername(SecurityContextHolder
                         .getContext()
@@ -143,7 +155,7 @@ public class CoursePlanController {
         return "redirect:/course-plan";
     }
 
-    @DeleteMapping("/delete-test/{id}")
+    @PostMapping("/delete-test/{id}")
     public String deleteTest(@PathVariable String id) {
         testService.delete(id);
         return "redirect:/course-plan";
@@ -172,9 +184,11 @@ public class CoursePlanController {
     @GetMapping("/edit-class/{id}")
     public String editClassPage(@PathVariable String id, Model model) {
         ClassSchedules classSchedules = classService.findById(id).orElseThrow(null);
+
         classSchedules.setClassSchedulesDateString(classSchedules.getClassSchedulesDate().toString());
         classSchedules.setClassSchedulesStartString(classSchedules.getClassSchedulesStart().toString());
         classSchedules.setClassSchedulesEndString(classSchedules.getClassSchedulesEnd().toString());
+
         model.addAttribute("classId", id);
         model.addAttribute("classSchedules", classSchedules );
         return "CoursePlan/EditClass";
@@ -208,14 +222,42 @@ public class CoursePlanController {
 
     @GetMapping("/edit-test/{id}")
     public String editTestPage(@PathVariable String id, Model model) {
-        Optional<TestSchedules> test = testService.findById(id);
-        model.addAttribute("class", test );
+        TestSchedules testSchedules = testService.findById(id).orElseThrow(null);
+
+        testSchedules.setTestSchedulesDateString(testSchedules.getTestSchedulesDate().toString());
+        testSchedules.setTestSchedulesStartString(testSchedules.getTestSchedulesStart().toString());
+        testSchedules.setTestSchedulesEndString(testSchedules.getTestSchedulesEnd().toString());
+
+        model.addAttribute("testSchedules", testSchedules);
+        model.addAttribute("testId", id);
         return "CoursePlan/EditTest";
     }
 
     @PostMapping("/update-test/{id}")
-    public String updateTest(@PathVariable String id, @RequestBody TestSchedules updatedTest) {
-        testService.update(id, updatedTest);
+    public String updateTest(@PathVariable String id, @ModelAttribute("testSchedules") TestSchedules updatedTest) {
+        TestSchedules testSchedules = testService.findById(id).orElseThrow(null);
+
+        // Convert String date and time fields to LocalDate and LocalTime
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        try {
+            updatedTest.setTestSchedulesDate(LocalDate.parse(updatedTest.getTestSchedulesDateString(), dateFormatter));
+            updatedTest.setTestSchedulesStart(LocalTime.parse(updatedTest.getTestSchedulesStartString(), timeFormatter));
+            updatedTest.setTestSchedulesEnd(LocalTime.parse(updatedTest.getTestSchedulesEndString(), timeFormatter));
+        } catch (DateTimeParseException e) {
+            // Handle parsing errors
+            return "redirect:/course-plan/update-test/" + id +"error=invalid_date_time_format";
+        }
+
+        updatedTest.setCustomer(
+                userService.findByUsername(SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName())
+        );
+        updatedTest.setTestSchedulesId(testSchedules.getTestSchedulesId());
+        testService.update(updatedTest);
         return "redirect:/course-plan";
     }
 }

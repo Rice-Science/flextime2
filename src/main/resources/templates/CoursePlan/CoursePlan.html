@@ -4,6 +4,32 @@
     <meta charset="UTF-8">
     <title>Course Plan</title>
     <link rel="stylesheet" href="/output.css">
+    <style>
+        .schedule-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+        }
+        .schedule-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .schedule-card {
+
+            /*still error*/
+            /*background-color: var(bg-tokyo-night-bg);*/
+
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.15s ease-in-out;
+        }
+        .schedule-card:hover {
+            transform: scale(1.05) translateY(-0.25rem);
+        }
+    </style>
 </head>
 <body class="bg-tokyo-night-bg text-white">
 
@@ -31,42 +57,63 @@
             </a>
         </div>
 
-        <!-- Assignment Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-            <div th:each="assignment : ${assignments}" class="bg-tokyo-night-variable p-6 rounded-lg shadow-lg transition ease-in-out hover:scale-105 hover:-translate-y-1 duration-150">
-                <p class="text-lg">Assignment</p>
-                <h2 class="text-2xl font-bold mb-2" th:text="${assignment.assignmentSchedulesTitle}">Assignment Title</h2>
-                <p class="text-lg" th:text="${assignment.formattedDate}">Deadline</p>
-                <a th:href="@{/course-plan/edit-assignment/{id}(id=${assignment.assignmentSchedulesId})}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Edit Assignment
-                </a>
-                <form th:action="@{/course-plan/delete-assignments/{id}(id=${assignment.assignmentSchedulesId})}" method="post" class="inline">
-                    <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-                        Delete Assignment
-                    </button>
-                </form>
+        <!-- Schedule Cards Container -->
+        <div class="schedule-container mt-12">
+            <!-- Assignment Cards Column -->
+            <div class="schedule-column">
+                <div th:each="assignment : ${assignments}" class="bg-card-bg p-6 rounded-lg shadow-lg transition ease-in-out hover:scale-105 hover:-translate-y-1 duration-150">
+                    <p class="text-lg">Assignment</p>
+                    <h2 class="text-2xl font-bold mb-2" th:text="${assignment.assignmentSchedulesTitle}">Assignment Title</h2>
+                    <p class="text-lg" th:text="${assignment.formattedDate}">Deadline</p>
+                    <a th:href="@{/course-plan/edit-assignment/{id}(id=${assignment.assignmentSchedulesId})}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Edit Assignment
+                    </a>
+                    <form th:action="@{/course-plan/delete-assignments/{id}(id=${assignment.assignmentSchedulesId})}" method="post" class="inline">
+                        <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                            Delete Assignment
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Class Schedule Cards Column -->
+            <div class="schedule-column">
+                <div th:each="classSchedule : ${class}" class="bg-card-bg p-6 rounded-lg shadow-lg transition ease-in-out hover:scale-105 hover:-translate-y-1 duration-150">
+                    <p class="text-lg">Class</p>
+                    <h2 class="text-2xl font-bold mb-2" th:text="${classSchedule.classSchedulesTitle}">Class Title</h2>
+                    <p class="text-lg" th:text="${classSchedule.formattedDate}">Date</p>
+                    <p class="text-lg" th:text="${classSchedule.formattedStart}">Start Time</p>
+                    <p class="text-lg" th:text="${classSchedule.formattedEnd}">End Time</p>
+                    <a th:href="@{/course-plan/edit-class/{id}(id=${classSchedule.classSchedulesId})}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Edit Class
+                    </a>
+                    <form th:action="@{/course-plan/delete-class/{id}(id=${classSchedule.classSchedulesId})}" method="post" class="inline">
+                        <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                            Delete Class
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Test Schedule Cards Column -->
+            <div class="schedule-column">
+                <div th:each="testSchedule : ${test}" class="bg-card-bg p-6 rounded-lg shadow-lg transition ease-in-out hover:scale-105 hover:-translate-y-1 duration-150">
+                    <p class="text-lg">Test</p>
+                    <h2 class="text-2xl font-bold mb-2" th:text="${testSchedule.testSchedulesTitle}">Test Title</h2>
+                    <p class="text-lg" th:text="${testSchedule.formattedDate}">Date</p>
+                    <p class="text-lg" th:text="${testSchedule.formattedStart}">Start Time</p>
+                    <p class="text-lg" th:text="${testSchedule.formattedEnd}">End Time</p>
+                    <a th:href="@{/course-plan/edit-test/{id}(id=${testSchedule.testSchedulesId})}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Edit Test
+                    </a>
+                    <form th:action="@{/course-plan/delete-test/{id}(id=${testSchedule.testSchedulesId})}" method="post" class="inline">
+                        <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
+                            Delete Test
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-            <!-- Class Schedule Cards -->
-            <div th:each="classSchedule : ${class}" class="bg-tokyo-night-variable p-6 rounded-lg shadow-lg transition ease-in-out hover:scale-105 hover:-translate-y-1 duration-150">
-                <p class="text-lg">Class</p>
-                <h2 class="text-2xl font-bold mb-2" th:text="${classSchedule.classSchedulesTitle}">Class Title</h2>
-                <p class="text-lg" th:text="${classSchedule.formattedDate}">Date</p>
-                <p class="text-lg" th:text="${classSchedule.formattedStart}">Start Time</p>
-                <p class="text-lg" th:text="${classSchedule.formattedEnd}">End Time</p>
-                <a th:href="@{/course-plan/edit-class/{id}(id=${classSchedule.classSchedulesId})}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Edit Class
-                </a>
-                <form th:action="@{/course-plan/delete-class/{id}(id=${classSchedule.classSchedulesId})}" method="post" class="inline">
-                    <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-xs px-2 py-1 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
-                        Delete Class
-                    </button>
-                </form>
-            </div>
-        </div>
-
     </div>
 </div>
 

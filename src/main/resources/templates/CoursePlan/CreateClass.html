@@ -11,6 +11,7 @@
 
 <div class="flex flex-col justify-between items-center container mx-auto mb-8 mt-24">
     <div class="flex flex-col items-center justify-center h-screen">
+        <h1 class="text-4xl font-bold mb-4">Add Class</h1>
         <form th:action="@{/course-plan/create-class}" th:object="${classSchedules}" method="post">
             <div class="form-group mb-4 col-4">
                 <label for="nameInput" class="block py-2 px-3 text-white rounded">Name</label>
