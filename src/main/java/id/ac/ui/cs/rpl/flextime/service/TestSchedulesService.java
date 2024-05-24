@@ -11,6 +11,6 @@ public interface TestSchedulesService {
     public List<TestSchedules> findAll();
     public void delete(String id);
     Optional<TestSchedules> findById(String id);
-    public void update(String id, TestSchedules testSchedules);
+    public TestSchedules update(TestSchedules testSchedules);
     List<TestSchedules> findTestByCustomerId(String customerId);
 }
