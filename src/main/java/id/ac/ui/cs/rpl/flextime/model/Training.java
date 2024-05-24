@@ -18,8 +18,4 @@ public class Training {
     @Column(columnDefinition = "TEXT")
     private String description;
     private String trainingType;
-
-    @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = false)
-    private User admin;
 }
