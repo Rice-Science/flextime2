@@ -11,11 +11,15 @@
 </div>
 <div class="">
     <section>
-        <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-            <h2 class="mb-4 text-3xl font-bold text-gray-900 dark:text-white">
+        <div class="py-4 px-4 mx-auto max-w-2xl lg:py-16">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
                 <span th:text="'Customize ' + ${training.title}">
                 </span>
             </h2>
+            <p class="text-gray-500 text-start mb-5">
+                    <span th:text="${training.getDescription()}">
+                    </span>
+            </p>
             <div class="flex flex-row">
                 <form th:action="@{/customization/save/{sessionPlanId}/{trainingId}(trainingId=${trainingId}, sessionPlanId=${sessionPlanId})}" method="post" th:object="${customization}">
                     <div class="grid gap-4 sm:grid-cols-2 sm:gap-6 w-64">
@@ -36,10 +40,6 @@
                         Customize
                     </button>
                 </form>
-                <p class="px-5 mt-6 ml-5 text-gray-500">
-                    <span th:text="${training.getDescription()}">
-                    </span>
-                </p>
             </div>
         </div>
     </section>

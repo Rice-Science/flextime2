@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -27,4 +26,12 @@ public class SessionSchedule {
 
     @Column
     private LocalTime endTime;
+
+    public String getStartTimeString() {
+        return startTime.toString();
+    }
+
+    public String getEndTimeString() {
+        return endTime.toString();
+    }
 }
