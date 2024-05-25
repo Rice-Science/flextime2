@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-full">
 <head class="w-full h-full">
     <meta charset="UTF-8">
     <title>Title</title>
@@ -9,8 +9,10 @@
 <body class="bg-tokyo-night-bg w-full h-full flex flex-col items-center justify-center dark">
     <div th:replace="navbar :: navbar">
     </div>
-    <div id="default-carousel" class="relative w-full bg-tokyo-night-bg translate-y-40 p-32 items-center" data-carousel="slide">
-        <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+
+    <div id="default-carousel" class="relative h-full w-full bg-tokyo-night-bg translate-y-12 p-32 items-center" data-carousel="slide">
+        <h1 class="text-6xl font-bold text-center text-tokyo-night-variable transition ease-in-out hover:scale-110 hover:text-white hover:-translate-y-1 duration-150">Flex up with FlexTime!</h1>
+        <div class="relative h-full overflow-auto rounded-lg mt-8">
             <div th:each="day : ${days}" class="hidden duration-700 ease-in-out" data-carousel-item>
                 <div class="max-w-3xl mx-auto text-center">
                     <h2 class="text-4xl font-extrabold leading-tight tracking-tight text-gray-900">
@@ -24,64 +26,77 @@
                     <div class="mt-4 text-gray-400">
                         <a href="/add-session-schedule">
                             <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition hover:scale-105 hover:-translate-y-1">
-                                Add Session Schedule
+                                View Session Schedule
                             </button>
                         </a>
                     </div>
                 </div>
-                <div class="grid grid-cols-4 justify-items-center">
-                    <h3 class="text-gray-400 font-semibold text-lg mt-5 self-start"> Session </h3>
-                    <div th:each="sessionSchedule:${sessionSchedules.get(day)}" class="max-w-3xl mx-auto mt-8 sm:mt-12 lg:mt-16">
-                        <div class="-my-4 divide-y divide-gray-200 dark:divide-gray-700">
-                            <div class="flex flex-col gap-2 py-4 sm:gap-6 sm:flex-row sm:items-center">
-                                <p th:text= "${sessionSchedule.getStartTime()} + ' - '+${sessionSchedule.getEndTime()}" class="w-32 text-md font-normal text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
-                                </p>
-                                <h3 class="text-md font-semibold text-gray-200">
-                                    <span th:text="${sessionSchedule.getSessionPlan().getTrainingType()}"></span>
-                                </h3>
+                <section class="bg-tokyo-night-bg flex-grow overflow-y-auto antialiased h-full">
+                    <div class="max-w-screen-xl px-4 py-8 mx-auto lg:px-6 sm:py-16 lg:py-24">
+                        <div class="max-w-3xl mx-auto">
+                            <p class="p-6 text-2xl font-bold text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
+                                Session
+                            </p>
+                            <div class="-my-4 divide-y divide-gray-200 dark:divide-gray-700 flex-grow overflow-y-scroll">
+                                <div th:each="sessionSchedule : ${sessionSchedules.get(day)}" class="flex flex-col gap-2 py-4 sm:gap-6 sm:flex-row sm:items-center">
+                                    <p class="w-32 text-lg font-normal text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
+                                        <span th:text="${sessionSchedule.getStartTimeString()} + ' - ' + ${sessionSchedule.getEndTimeString()}"></span>
+                                    </p>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        <a th:href="@{/session-training/{id}(id=${sessionSchedule.sessionPlan.id})}" class="hover:underline">
+                                            <span th:text="${sessionSchedule.getSessionPlan().getTrainingType()}"></span>
+                                        </a>
+                                    </h3>
+                                </div>
+                            </div>
+                            <p class="p-6 text-2xl font-bold text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
+                                Class
+                            </p>
+                            <div class="-my-4 divide-y divide-gray-200 dark:divide-gray-700 flex-grow overflow-y-scroll">
+                                <div th:each="classSched : ${classSchedulesMap.get(day)}" class="flex flex-col gap-2 py-4 sm:gap-6 sm:flex-row sm:items-center">
+                                    <p class="py-4 w-32 text-lg font-normal text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
+                                        <span th:text="${classSched.formattedStart} + ' - ' + ${classSched.formattedEnd}"></span>
+                                    </p>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        <a href="#" class="hover:underline">
+                                            <span th:text="${classSched.classSchedulesTitle}"></span>
+                                        </a>
+                                    </h3>
+                                </div>
+                            </div>
+                            <p class="p-6 text-2xl font-bold text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
+                                Assignment
+                            </p>
+                            <div class="-my-4 divide-y divide-gray-200 dark:divide-gray-700 flex-grow overflow-y-scroll">
+                                <div th:each="assignmentSched : ${assignmentSchedules.get(day)}" class="flex flex-col gap-2 py-4 sm:gap-6 sm:flex-row sm:items-center">
+                                    <p class="w-32 text-lg font-normal text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
+                                        <span th:text="${assignmentSched.formattedDate}"></span>
+                                    </p>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        <a href="#" class="hover:underline">
+                                            <span th:text="${assignmentSched.assignmentSchedulesTitle}"></span>
+                                        </a>
+                                    </h3>
+                                </div>
+                            </div>
+                            <p class="p-6 text-start text-2xl font-bold text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
+                                Test
+                            </p>
+                            <div class="-my-4 divide-y divide-gray-200 dark:divide-gray-700 flex-grow overflow-y-scroll">
+                                <div th:each="testSched : ${testSchedules.get(day)}" class="flex flex-col gap-2 py-4 sm:gap-6 sm:flex-row sm:items-center">
+                                    <p class="w-32 text-lg font-normal text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
+                                        <span th:text="${testSched.testSchedulesDate.toString()} + ' ' + ${testSched.formattedStart} + ' - ' + ${testSched.formattedEnd}"></span>
+                                    </p>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                        <a href="#" class="hover:underline">
+                                            <span th:text="${testSched.testSchedulesTitle}"></span>
+                                        </a>
+                                    </h3>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <h3 class="text-gray-400 font-semibold text-lg mt-5"> Class </h3>
-                    <div th:each="classSchedule : ${classSchedulesMap.get(day)}" class="max-w-3xl mx-auto mt-8 sm:mt-12 lg:mt-16">
-                        <div class="-my-4 divide-y divide-gray-200 dark:divide-gray-700">
-                            <div class="flex flex-col gap-2 py-4 sm:gap-6 sm:flex-row sm:items-center">
-                                <p th:text= "${classSchedule.getFormattedStart()} + ' - ' + ${classSchedule.getFormattedEnd()}" class="w-32 text-sm font-normal text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
-                                </p>
-                                <h3 th:text="${classSchedule.getClassSchedulesTitle()}" class="text-sm font-semibold text-white">
-                                    <span th:text="${classSchedule.getClassSchedulesTitle()}" ></span>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3 class="text-gray-400 font-semibold text-lg mt-5"> Deadlines </h3>
-                    <div th:each="assignmentSchedule : ${assignmentSchedules.get(day)}" class="max-w-3xl mx-auto mt-8 sm:mt-12 lg:mt-16">
-                        <div class="-my-4 divide-y divide-gray-200 dark:divide-gray-700">
-                            <div class="flex flex-col gap-2 py-4 sm:gap-6 sm:flex-row sm:items-center">
-                                <p th:text= "${assignmentSchedule.getFormattedDate()}" class="w-32 text-sm font-normal text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
-                                </p>
-                                <h3 th:text="${assignmentSchedule.getAssignmentSchedulesTitle()}" class="text-sm font-semibold text-white">
-                                    <span th:text="${assignmentSchedule.getAssignmentSchedulesTitle()}" ></span>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3 class="text-gray-400 font-semibold text-lg mt-5"> Test </h3>
-                    <div th:each="test : ${testSchedules.get(day)}" class="max-w-3xl mx-auto mt-8 sm:mt-12 lg:mt-16">
-                        <div class="-my-4 divide-y divide-gray-200 dark:divide-gray-700">
-                            <div class="flex flex-col gap-2 py-4 sm:gap-6 sm:flex-row sm:items-center">
-                                <p th:text= "${test.getFormattedDate()}" class="w-32 text-sm font-normal text-gray-500 sm:text-right dark:text-gray-400 shrink-0">
-                                </p>
-                                <h3 th:text="${test.getTestSchedulesTitle()}" class="text-sm font-semibold text-white">
-                                    <span th:text="${test.getTestSchedulesTitle()}" ></span>
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </section>
             </div>
         </div>
         <!-- Slider indicators -->

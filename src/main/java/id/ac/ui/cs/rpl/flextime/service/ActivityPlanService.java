@@ -12,4 +12,5 @@ public interface ActivityPlanService {
     public void createSessionSchedules(User user, SessionSchedule sessionSchedule) throws Exception;
     public List<SessionSchedule> findSessionSchedulesByDayAndByUser_Id(UUID user_id, String day);
 
+    public List<SessionSchedule> findSessionSchedulesByUserId(String userId);
 }
