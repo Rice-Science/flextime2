@@ -44,19 +44,18 @@ public class HomeController {
     @GetMapping("")
     public String home(Model model) {
         FitnessPlan fitnessPlan = fitnessPlanService.getFitnessPlanByCustomerId(userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getId().toString());
-        if (fitnessPlan == null) {
-            return "redirect:/fitness-plan";
-        }
-
-        List<SessionPlan> sessionPlans = sessionPlanService.getAllSessionPlansByFitnessPlan(fitnessPlan.getId().toString());
 
         User user = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
         List<TestSchedules> testSchedules = testService.findTestByCustomerId(user.getId().toString());
         List<ClassSchedules> classSchedules = classService.findClassByCustomerId(user.getId().toString());
         List<AssignmentSchedules> assignmentSchedules = assignmentService.findAssignmentByCustomerId(user.getId().toString());
 
-        if ( (testSchedules.isEmpty() && classSchedules.isEmpty() && assignmentSchedules.isEmpty() ) || sessionPlans.isEmpty()) {
+        if ( testSchedules.isEmpty() && classSchedules.isEmpty() && assignmentSchedules.isEmpty()) {
             return "homePage/noActivityPlan";
+        }
+
+        if (fitnessPlan == null) {
+            return "redirect:/fitness-plan";
         }
 
         Map<String, List<ClassSchedules>> classSchedulesHashMap = new HashMap<>();
@@ -109,16 +108,23 @@ public class HomeController {
 
     @GetMapping("/add-session-schedule")
     public String addSessionSchedule(Model model) {
-        List<SessionPlan> availableSessionPlans = sessionPlanService.getAllSessionPlansByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<SessionPlan> availableSessionPlans2 = sessionPlanService.getAllSessionPlansByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+        List<SessionSchedule> sessionSchedules = activityPlanService.findSessionSchedulesByUserId(userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getId().toString());
+
+        List<SessionPlan >availableSessionPlans = availableSessionPlans2.stream().filter(sessionPlan -> sessionSchedules.stream().noneMatch(sessionSchedule -> sessionSchedule.getSessionPlan().getId().equals(sessionPlan.getId()))).collect(Collectors.toList());
+
         model.addAttribute("availableSessionPlans", availableSessionPlans);
-        return "homePage/addSession";
+        model.addAttribute("sessionSchedules", sessionSchedules);
+        model.addAttribute("service", sessionPlanService);
+        return availableSessionPlans2.isEmpty() ? "redirect:/session-plan" : "homePage/pickSession";
     }
 
     @GetMapping("/add-session-schedule/{sessionId}")
     public String addSessionToSchedule(@PathVariable String sessionId, Model model) {
         SessionScheduleDto sessionScheduleDto = new SessionScheduleDto();
-        model.addAttribute("sessionId", sessionId);
+        model.addAttribute("sessionPlan", sessionPlanService.getSessionPlanById(sessionId).orElseThrow());
         model.addAttribute("sessionScheduleDto", sessionScheduleDto);
+        model.addAttribute("minTime", sessionPlanService.getTotalDurationInSeconds(sessionId));
         return "homePage/addSession";
     }
 
@@ -141,6 +147,12 @@ public class HomeController {
         }
 
         return "redirect:/";
+    }
+
+    @PostMapping("/delete-session-schedule/{sessionId}")
+    public String deleteSessionSchedule(@PathVariable String sessionId) {
+        activityPlanService.deleteSessionSchedules(UUID.fromString(sessionId));
+        return "redirect:/add-session-schedule";
     }
 }
 

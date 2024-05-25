@@ -43,8 +43,8 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
         }
 
-        if (totalSession > totalDuration){
-            throw new Exception("You have exceeded the total duration of the session");
+        if (totalSession < totalDuration){
+            throw new Exception("You don't have enough session to do this plan");
         }
 
         for (ClassSchedules classSchedule : classSchedules) {
@@ -62,8 +62,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     }
 
     public void createSessionSchedules(User user, SessionSchedule sessionSchedule) throws Exception {
-        checkSessionPlan(user, sessionSchedule);
-        sessionScheduleRepository.save(sessionSchedule);
+        sessionScheduleRepository.save(checkSessionPlan(user, sessionSchedule));
     }
 
     public List<SessionSchedule> findSessionSchedulesByDayAndByUser_Id(UUID user_id, String day) {
@@ -73,6 +72,10 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
 
         return sessionScheduleRepository.findSessionSchedulesByDayAndSessionPlanIn(day, sessionPlans);
 
+    }
+
+    public List<SessionSchedule> findSessionSchedulesByUserId(String userId) {
+        return sessionScheduleRepository.findSessionSchedulesBySessionPlan_FitnessPlan_Customer_Id(UUID.fromString(userId));
     }
 
 
